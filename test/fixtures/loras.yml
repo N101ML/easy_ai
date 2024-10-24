@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyText
+  url_src: MyText
+  scale: 1.5
+  trigger: MyText
+  model: one
+
+two:
+  name: MyText
+  url_src: MyText
+  scale: 1.5
+  trigger: MyText
+  model: two
