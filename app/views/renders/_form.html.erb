@@ -1,0 +1,28 @@
+<%= form_with(model: @render, local: true) do |form| %>
+  <div class="my-5">
+    <%= form.label :prompt, "Prompt" %>
+    <%= form.text_area :prompt, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter prompt (e.g., {lora_1} in the style of {lora_2})" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :guidance_scale, "Guidance Scale" %>
+    <%= form.number_field :guidance_scale, step: 0.01, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter guidance scale" %>
+  </div>
+
+  <!-- Multi-select dropdown for selecting multiple LoRAs -->
+  <div class="my-5">
+    <%= form.label :lora_ids, "Select LoRAs (Optional)" %>
+    <%= form.select :lora_ids, options_from_collection_for_select(Lora.all, :id, :name), { multiple: true, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" } %>
+  </div>
+
+  <div class="my-5">
+    <% Lora.all.each do |lora| %>
+      <%= form.label "scale_#{lora.id}", "Scale for #{lora.name} (Optional)" %>
+      <%= form.number_field "scale_#{lora.id}", step: 0.01, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <% end %>
+  </div>
+
+  <div class="my-5">
+    <%= form.submit "Create Render", class: "bg-blue-500 text-white px-4 py-2 rounded-md" %>
+  </div>
+<% end %>
