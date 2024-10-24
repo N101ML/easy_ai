@@ -55,6 +55,18 @@ class RendersController < ApplicationController
   end
 
   def generate_image_via_api(render, loras)
+    case lora.platform
+    when "Replicate"
+      replicate_image(render, loras)
+    end
+  end
+
+  def replicate_image(render, loras)
+    # Add token to lora source
+    loras.each do |lora|
+      lora.url_src = lora.url_src + ENV["REPLICATE_API_TOKEN"]
+    end
+
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP.new(uri.path, { 'Content-Type' => 'application/json' })
