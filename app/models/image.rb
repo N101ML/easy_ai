@@ -1,4 +1,4 @@
 class Image < ApplicationRecord
-  belongs_to :image_render, class_name: "ImageRender"
+  belongs_to :render
   has_one_attached :file
 end

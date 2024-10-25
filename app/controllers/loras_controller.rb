@@ -66,6 +66,6 @@ class LorasController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def lora_params
-      params.require(:lora).permit(:name, :url_src, :trigger, :model_id)
+      params.require(:lora).permit(:name, :url_src, :platform, :trigger, :model_id)
     end
 end

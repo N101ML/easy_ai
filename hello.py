@@ -22,6 +22,7 @@ from flask import Flask, request, jsonify
 # standard_lora = 0.8
 # g_scale = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5]
 # prompt = f"An anthro {dunc_trigger} piloting a star fighter in the cockpit wearing a helmet distracted in a space battle with a playstation-esque video game HUD on the screen in {trigger_word}"
+# "An anthro {lora_1} piloting a star fighter in the cockpit wearing a helmet distracted in a space battle with a playstation-esque video game HUD on the screen in {lora_2}"
 
 # test_lora_1 = 0.8
 # test_lora_2 = 1.0
