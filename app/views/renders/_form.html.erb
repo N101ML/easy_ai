@@ -1,7 +1,7 @@
 <%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales" }) do |form| %>
   <div class="my-5">
-    <%= form.label :type, "Type" %>
-    <%= form.select :type, options_for_select(['Image']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.label :render_type, "Type" %>
+    <%= form.select :render_type, options_for_select(['Image']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
@@ -20,8 +20,14 @@
 
   <!-- Multi-select dropdown for selecting multiple LoRAs -->
   <div class="my-5">
-    <%= form.label :lora_ids, "Select LoRAs (Optional)" %>
-    <%= form.select :lora_ids, options_from_collection_for_select(Lora.all, :id, :name), { multiple: true , include_blank: false }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", data: { lora_scales_target: "select", action: "lora-scales#updateFields" } %>
+    <%= form.select :lora_ids, 
+      options_from_collection_for_select(Lora.all, :id, :name),
+      { selected: form.object.lora_ids, include_hidden: false },
+      { multiple: true, 
+        class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
+        data: { lora_scales_target: "select", action: "lora-scales#updateFields" }
+      }
+    %>
   </div>
 
   <!-- Placeholder where lora_X scale fields will be inserted -->

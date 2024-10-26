@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require 'uri'
 
 class RendersController < ApplicationController
   def index
@@ -18,17 +19,27 @@ class RendersController < ApplicationController
   def create
     @render = Render.new(render_params)
     @models = Model.all
+
     # Initialize lora locals
-    lora_ids = (params[:render][:lora_ids] || []).reject(&:blank?)
+    lora_ids = (params[:render][:lora_ids] || []).reject(&:blank?).map { |id| id.to_f }
     loras = Lora.where(id: lora_ids)
     valid_scales = true
 
-    tokenize_loras(loras) if loras.present?
+    # Lora Triggers
+    @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
+
+    # Tokenize
+    if loras.present?
+      loras.each do |lora|
+        lora.url_src = tokenize_lora(lora)
+        puts "lora tokenized: #{lora.url_src}"
+      end
+    end
 
     lora_ids.each_with_index do |lora_id, index|
       scale = params["lora_scale_#{index + 1}"]
       if scale.blank?
-        @render.errors.add(:base, "Scale mys be present for LoRA# #{index + 1}")
+        @render.errors.add(:base, "Scale must be present for LoRA# #{index + 1}")
         valid_scales = false
       elsif !scale.is_a?(Numeric) && !scale.to_s.match(/\A\d+(\.\d+)?\z/)
         @render.errors.add(:base, "Scale must be a numeric value for Lora# #{index + 1}")
@@ -39,7 +50,6 @@ class RendersController < ApplicationController
       # The Lora scale is added, after save, to the renders_loras join table
       lora_ids.each_with_index do |lora_id, index|
         puts "lora_id: #{lora_id}"
-        puts "params: #{params}"
         scale = params["lora_scale_#{index + 1}"].to_f  # Convert scale to float
         puts "scale: #{scale}"
         @render.render_loras.create(lora_id: lora_id, scale: scale)
@@ -47,7 +57,7 @@ class RendersController < ApplicationController
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
       image_url = generate_image_via_api(@render, loras)
-
+      puts "image_url: #{image_url}"
       @render.images.create(filename: File.basename(image_url)) if image_url
       
 
@@ -91,10 +101,6 @@ class RendersController < ApplicationController
   end
 
   def replicate_image(render, loras)
-    # Add token to lora source
-    loras.each do |lora|
-      lora.url_src = lora.url_src + ENV["REPLICATE_API_TOKEN"]
-    end
 
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
@@ -102,31 +108,43 @@ class RendersController < ApplicationController
 
     data = {
       prompt: render.prompt,
-      model: render.model,
+      model: render.model.url_src,
       lora_1: loras[0]&.url_src,
       lora_2: loras[1]&.url_src,
-      l1_scale: render.renders_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
-      l2_scale: render.renders_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
+      l1_scale: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
+      l2_scale: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
       g_scale: render.guidance_scale
     }
+
+    Rails.logger.info("Sending request to Flask app: #{data.to_json}")
+    puts "data_file: #{data}"
     request.body = data.to_json
 
-    response = http.request(request)
-
-    if response.code == '200'
-      json_response = JSON.parse(response.body)
-      json_response['image_url']
-    else
-      nil
+    begin
+      response = http.request(request)
+      if response.code == '200'
+        json_response = JSON.parse(response.body)
+        return json_response['image_url']
+      else
+        Rails.logger.error("Flask app returned an error: #{response.code} - #{response.body}")
+        return nil
+      end
+    rescue StandardError => e
+      Rails.logger.error("Error connecting to Flask app: #{e.message}")
+      return nil
     end
   end
 
-  def tokenize_loras(loras)
-    loras.each do |lora|
-      case lora.platform
-      when 'Civitai'
-        lora.url_src = lora.url_src + ENV["CIVITAI_API_TOKEN"]
+  def tokenize_lora(lora)
+    puts "url_src: #{lora.url_src}"
+    case lora.platform
+    when 'Civitai'
+      if ENV["CIVITAI_API_TOKEN"].present?
+        return lora.url_src + ENV["CIVITAI_API_TOKEN"]
+      else
+        raise "CIVITAI_API_TOKEN environment variable is not set"
       end
     end
+    lora.url_src
   end
 end
