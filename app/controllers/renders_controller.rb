@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 require 'uri'
+require 'open-uri'
 
 class RendersController < ApplicationController
   def index
@@ -23,8 +24,8 @@ class RendersController < ApplicationController
     # Initialize lora locals
     lora_ids = (params[:render][:lora_ids] || []).reject(&:blank?).map { |id| id.to_f }
     loras = Lora.where(id: lora_ids)
-    valid_scales = true
-
+    lora_scales = params[:lora_scales] || []
+    puts "lora scales: #{lora_scales}"
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
 
@@ -36,30 +37,20 @@ class RendersController < ApplicationController
       end
     end
 
-    lora_ids.each_with_index do |lora_id, index|
-      scale = params["lora_scale_#{index + 1}"]
-      if scale.blank?
-        @render.errors.add(:base, "Scale must be present for LoRA# #{index + 1}")
-        valid_scales = false
-      elsif !scale.is_a?(Numeric) && !scale.to_s.match(/\A\d+(\.\d+)?\z/)
-        @render.errors.add(:base, "Scale must be a numeric value for Lora# #{index + 1}")
-      end
-    end
-
-    if valid_scales && @render.save
-      # The Lora scale is added, after save, to the renders_loras join table
+    if @render.save
+      lora_ids = params[:render][:lora_ids] || []
       lora_ids.each_with_index do |lora_id, index|
-        puts "lora_id: #{lora_id}"
-        scale = params["lora_scale_#{index + 1}"].to_f  # Convert scale to float
-        puts "scale: #{scale}"
+        scale = params["lora_scale_#{index + 1}"].to_f
         @render.render_loras.create(lora_id: lora_id, scale: scale)
       end
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
       image_url = generate_image_via_api(@render, loras)
-      puts "image_url: #{image_url}"
-      @render.images.create(filename: File.basename(image_url)) if image_url
-      
+
+      if image_url
+        image = @render.images.create(filename: File.basename(image_url))
+        image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
+      end
 
       redirect_to @render, notice: 'Render was successfully created.'
     else
@@ -82,8 +73,9 @@ class RendersController < ApplicationController
   private
 
   def render_params
-    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id, lora_ids: [])
+    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id)
   end
+
 
   def process_lora_triggers(prompt, loras)
     loras.each_with_index do |lora, index|
@@ -105,7 +97,7 @@ class RendersController < ApplicationController
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
-
+    puts "loras from replicate: #{loras}"
     data = {
       prompt: render.prompt,
       model: render.model.url_src,
@@ -140,7 +132,7 @@ class RendersController < ApplicationController
     case lora.platform
     when 'Civitai'
       if ENV["CIVITAI_API_TOKEN"].present?
-        return lora.url_src + ENV["CIVITAI_API_TOKEN"]
+        return lora.url_src + '&token=' + ENV["CIVITAI_API_TOKEN"]
       else
         raise "CIVITAI_API_TOKEN environment variable is not set"
       end

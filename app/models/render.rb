@@ -1,6 +1,6 @@
 class Render < ApplicationRecord
   belongs_to :model
-  has_many :render_loras, class_name: "RenderLora", dependent: :destroy
+  has_many :render_loras, dependent: :destroy
   has_many :loras, through: :render_loras
   has_many :images, dependent: :destroy
 
@@ -8,4 +8,6 @@ class Render < ApplicationRecord
   validates :prompt, presence: true
 
   has_one_attached :file
+
+  accepts_nested_attributes_for :render_loras, allow_destroy: true
 end
