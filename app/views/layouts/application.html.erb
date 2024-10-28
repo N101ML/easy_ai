@@ -1,19 +1,145 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EasyAi</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>EasyAI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
-      <%= yield %>
-    </main>
-  </body>
-</html>
+  <body class="bg-custom-bg-main">
+
+    <% if notice.present? %>
+      <p class="inline-block px-3 py-2 mb-5 font-medium text-green-500 rounded-lg bg-green-50" id="notice"><%= notice %></p>
+    <% end %>
+
+    <% if alert.present? %>
+      <p class="inline-block px-3 py-2 mb-5 font-medium text-red-500 rounded-lg bg-red-50" id="alert"><%= alert %></p>
+    <% end %>
+
+    <header>
+    </header>
+
+    <!-- Top Menu -->
+    <div data-controller="">
+      <div class="relative flex justify-between p-2">
+
+        <!-- Hamburger button (mobile) -->
+        <button class="block w-8 h-8 md:hidden" data-action="">
+          <%= render partial: 'svg/hamburger', locals: { class: "w-full h-full" } %>
+        </button>
+
+        <!-- Main Menu-->
+        <div data-menu-target="" class="absolute inset-y-0 left-0 hidden w-2/3 h-screen rounded-r-lg bg-custom-bg-modal">
+
+          <!-- Exit Button -->
+          <div class="absolute top-2 right-2">
+            <%= link_to root_path, class: "transition-colors duration-200 hover:bg-gray-500" do %>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-black"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            <% end %>
+          </div>
+            
+          <!-- Mobile Nav slide-in-->
+          <div class="p-2">
+            <div class="grid gap-1 text-black">
+              <%= link_to "Home", root_path, class: "block py-2 hover:bg-gray-700" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logo -->
+        <div class="">
+          <%= link_to root_path, class: "" do %>
+            <%= image_tag 'logo_no_bg.webp', class: "w-32 h-auto md:w-40" %>
+          <% end %>
+        </div>
+
+        <!-- Top-Right Corner Button -->
+        <div class="w-8 h-8">
+          <button class="" data-action="">
+            <%= render partial: 'svg/account', locals: { class: "w-full h-full" } %>
+          </button>
+        </div>
+
+        <!-- Mobile Right Slide-in -->
+        <div data-menu-target="" class="absolute inset-y-0 right-0 hidden w-2/3 h-screen rounded-l-lg bg-custom-bg-modal">
+          
+          <!-- Exit Button -->
+          <div class="absolute right-2 top-2">
+            <%= link_to root_path, class: "transition-colors duration-200 hover:bg-gray-500" do %>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-black"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            <% end %>
+          </div>
+          
+          <!-- Mobile Right Slide-in object list -->
+          <div class="p-6">
+            <div class="grid gap-1 text-black">
+              <%# Add render here<%= render @renders %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav + Main -->
+    <div class="flex">
+
+      <!-- Nav panel -->
+      <div class="hidden w-1/6 p-4 text-white md:text-2xl md:flex">
+        <div class="flex-col">
+          <div>
+            <%# Add Selected Model info here %>
+          </div>
+          <br>
+          <div class="border-2 rounded-lg border-rose-500">
+            <%= link_to "Renders", renders_path, class: "hover:text-gray-400" %>
+          </div>
+          <div class="border-2 rounded-lg border-rose-500">
+            <%= link_to "Loras", loras_path, class: "hover:text-gray-400" %>
+          </div>
+          <div class="border-2 rounded-lg border-rose-500">
+            <%= link_to "Models", models_path, class: "m-0 hover:text-gray-400" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="p-2 md:w-5/6">
+
+        <!-- Main content -->
+        <main class="">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+    </body>
+  </html>

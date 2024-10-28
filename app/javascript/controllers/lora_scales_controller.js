@@ -19,7 +19,7 @@ export default class extends Controller {
       // Create label for the scale field
       const label = document.createElement("label");
       label.textContent = `Scale for ${lora.textContent}`;
-      label.classList.add("block", "font-medium", "mt-2");
+      label.classList.add("block", "font-medium", "mt-2", "text-white");
 
       // Create number input field for scale
       const input = document.createElement("input");

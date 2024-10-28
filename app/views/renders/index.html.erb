@@ -1,21 +1,27 @@
 <div class="w-full">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+    <p class="inline-block px-3 py-2 mb-5 font-medium text-green-500 rounded-lg bg-green-50" id="notice"><%= notice %></p>
   <% end %>
 
   <% content_for :title, "Renders" %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Renders</h1>
-    <%= link_to "New render", new_render_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+  <div class="flex items-center justify-between text-white">
+    <h1 class="text-4xl font-bold">Renders</h1>
+    <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div id="renders" class="min-w-full">
-    <% @renders.each do |render| %>
-      <%= render render %>
-      <p>
-        <%= link_to "Show this render", render, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
+  <div class="border border-gray-300 rounded-md">
+    <!-- Header Row -->
+    <div class="flex font-semibold text-white bg-gray-800">
+      <div class="text-center basis-1/4">Type</div>
+      <div class="text-center basis-1/2">Model/Prompt</div>
+      <div class="text-center basis-1/4">LoRAs</div>
+    </div>
+
+    <!-- Rows for Each Render -->
+    <div class="">
+      <% @renders.each do |render| %>
+        <%= render render %>
+      <% end %>
+    </div>
   </div>
-</div>

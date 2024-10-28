@@ -5,7 +5,7 @@ require 'open-uri'
 
 class RendersController < ApplicationController
   def index
-    @renders = Render.all
+    @renders = Render.where(render_type: "Image").includes(:images)
   end
 
   def new
@@ -52,7 +52,7 @@ class RendersController < ApplicationController
         image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
       end
 
-      redirect_to @render, notice: 'Render was successfully created.'
+      redirect_to images_path, notice: 'Render was successfully created.'
     else
       Rails.logger.info(@render.errors.full_messages)
       @models = Model.all 

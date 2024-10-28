@@ -1,10 +1,10 @@
 <%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales" }) do |form| %>
   <div class="my-5">
-    <%= form.label :render_type, "Type" %>
+    <%= form.label :render_type, "Type", class: "text-white" %>
     <%= form.select :render_type, options_for_select(['Image']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="my-5 text-white">
     <%= form.label :prompt, "Prompt" %>
     <%= form.text_area :prompt, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter prompt (e.g., {lora_1} in the style of {lora_2})" %>
   </div>
@@ -13,7 +13,7 @@
     <%= form.collection_select :model_id, @models, :id, :name, { prompt: "Select a Model" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="my-5 text-white">
     <%= form.label :guidance_scale, "Guidance Scale" %>
     <%= form.number_field :guidance_scale, step: 0.01, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter guidance scale" %>
   </div>
