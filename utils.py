@@ -21,7 +21,7 @@ def add_image_html(html_filename, img_filename):
     f.write(f"</div>\n")
 
 # Generate images
-def gen_image(prompt, model, dunc_lora, other_lora, l1, l2, g_scale):
+def gen_image(prompt, model, dunc_lora, other_lora, l1, l2, g_scale, steps):
   output = replicate.run(
     model,
     input={
@@ -34,7 +34,7 @@ def gen_image(prompt, model, dunc_lora, other_lora, l1, l2, g_scale):
       "guidance_scale": g_scale,
       "output_quality": 80,
       "prompt_strength": 0.8,
-      "num_inference_steps": 30,
+      "num_inference_steps": steps,
       "disable_safety_checker": True
     }
   )

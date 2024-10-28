@@ -5,5 +5,5 @@ Rails.application.routes.draw do
   resources :images
 
   get "up" => "rails/health#show", as: :rails_health_check
-  root "models#index"
+  root "renders#index"
 end

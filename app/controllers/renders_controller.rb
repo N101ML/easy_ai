@@ -20,12 +20,9 @@ class RendersController < ApplicationController
   def create
     @render = Render.new(render_params)
     @models = Model.all
-
-    # Initialize lora locals
-    lora_ids = (params[:render][:lora_ids] || []).reject(&:blank?).map { |id| id.to_f }
+    lora_ids = params[:render][:lora_ids] || []
     loras = Lora.where(id: lora_ids)
-    lora_scales = params[:lora_scales] || []
-    puts "lora scales: #{lora_scales}"
+
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
 
@@ -38,7 +35,7 @@ class RendersController < ApplicationController
     end
 
     if @render.save
-      lora_ids = params[:render][:lora_ids] || []
+      # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
       lora_ids.each_with_index do |lora_id, index|
         scale = params["lora_scale_#{index + 1}"].to_f
         @render.render_loras.create(lora_id: lora_id, scale: scale)
@@ -52,7 +49,7 @@ class RendersController < ApplicationController
         image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
       end
 
-      redirect_to images_path, notice: 'Render was successfully created.'
+      redirect_to renders_path, notice: 'Render was successfully created.'
     else
       Rails.logger.info(@render.errors.full_messages)
       @models = Model.all 
@@ -73,7 +70,7 @@ class RendersController < ApplicationController
   private
 
   def render_params
-    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id)
+    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id, :steps)
   end
 
 
@@ -105,7 +102,8 @@ class RendersController < ApplicationController
       lora_2: loras[1]&.url_src,
       l1_scale: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
       l2_scale: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
-      g_scale: render.guidance_scale
+      g_scale: render.guidance_scale,
+      steps: render.steps
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")
@@ -131,10 +129,10 @@ class RendersController < ApplicationController
     puts "url_src: #{lora.url_src}"
     case lora.platform
     when 'Civitai'
-      if ENV["CIVITAI_API_TOKEN"].present?
-        return lora.url_src + '&token=' + ENV["CIVITAI_API_TOKEN"]
+      if ENV["REPLICATE_API_TOKEN"].present?
+        return lora.url_src + '&token=' + ENV["REPLICATE_API_TOKEN"]
       else
-        raise "CIVITAI_API_TOKEN environment variable is not set"
+        raise "REPLICATE_API_TOKEN environment variable is not set"
       end
     end
     lora.url_src

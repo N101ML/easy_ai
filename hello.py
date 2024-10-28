@@ -2,9 +2,13 @@ import replicate
 import requests
 from PIL import Image
 from io import BytesIO
+# from dotenv import load_dotenv
 import os
 from utils import *
 from flask import Flask, request, jsonify
+
+# load_dotenv()
+# print(os.getenv("REPLICATE_API_TOKEN"))
 
 # # Define the prompt and model
 # model = "lucataco/flux-dev-multi-lora:2389224e115448d9a77c07d7d45672b3f0aa45acacf1c5bcf51857ac295e3aec"
@@ -43,8 +47,9 @@ def generate_image():
   l1_scale = data.get('l1_scale')
   l2_scale = data.get('l2_scale')
   g_scale = data.get('g_scale')
+  steps = data.get('steps')
 
-  image_url = gen_image(prompt, model, lora_1, lora_2, l1_scale, l2_scale, g_scale)
+  image_url = gen_image(prompt, model, lora_1, lora_2, l1_scale, l2_scale, g_scale, steps)
 
   return jsonify({'image_url': image_url})
 
