@@ -4,7 +4,7 @@
       <%= image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover") if render.images.first&.image&.attached? %>
     <% end %>
   </div>
-  <div class="p-2 border-l basis-1/2">
+  <div class="p-2 basis-1/2">
     <div class="text-center border rounded-md">
       <strong>Model: <%= render.model.name %></strong>
     </div>
@@ -13,7 +13,7 @@
     </div>
   </div>
   <%# Lora Details %>
-  <div class="flex flex-col p-2 text-left border-l basis-1/4">
+  <div class="flex flex-col p-2 text-left basis-1/4">
     <div>
       <strong>Guidance Scale:</strong>
       <%= render.guidance_scale %>

@@ -10,12 +10,20 @@
     <%= link_to "New lora", new_lora_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div id="loras" class="min-w-full">
-    <% @loras.each do |lora| %>
-      <%= render lora %>
-      <p>
-        <%= link_to "Show this lora", lora, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
+  <div class="border border-gray-300 rounded-md">
+    <!-- Header Row -->
+    <div class="flex font-semibold text-white bg-gray-800">
+      <div class="text-center basis-1/5">Name</div>
+      <div class="text-center basis-1/5">URL</div>
+      <div class="text-center basis-1/5">Trigger</div>
+      <div class="text-center basis-1/5">Platform</div>
+      <div class="text-center basis-1/5">Model</div>
+    </div>
+
+    <!-- Rows for each Lora -->
+    <div>
+      <% @loras.each do |lora| %>
+        <%= render lora %>
+      <% end %>
+    </div>
   </div>
-</div>
