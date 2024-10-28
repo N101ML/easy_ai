@@ -13,18 +13,9 @@
   <%= render partial: "shared/resource_table", locals: { 
     collection: @renders, 
     headers: [
-      { label: "Type", basis: "1/4", content: ->(render) { link_to(image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover"), image_path(render.images.first)) if render.images.first&.image&.attached? } },
-      { label: "Model/Prompt", basis: "1/2", content: ->(render) do
-        "<div class='text-center border rounded-md'><strong>Model: #{render.model.name}</strong></div><div>#{render.prompt}</div>".html_safe
-      end },
-      { label: "LoRAs", basis: "1/4", content: ->(render) do
-        content = "<div><strong>Guidance Scale:</strong> #{render.guidance_scale}</div>"
-        render.render_loras.each do |render_lora|
-          content += "<div><strong>Lora: #{render_lora.lora.name}</strong> - Scale: #{render_lora.scale}</div>"
-        end
-        content += "<div><strong>Inference Steps:</strong> #{render.steps}</div>"
-        content.html_safe
-      end }
+      { label: "Type", basis: "1/4", content: ->(render) { render_type_content(render) } },
+      { label: "Model/Prompt", basis: "1/2", content: ->(render) { render_model_prompt_content(render) } },
+      { label: "LoRAs", basis: "1/4", content: ->(render) { render_loras_content(render) } }
     ] 
   } %>
 </div>

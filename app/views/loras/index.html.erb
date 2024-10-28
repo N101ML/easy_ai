@@ -13,11 +13,10 @@
   <%= render partial: "shared/resource_table", locals: { 
     collection: @loras, 
     headers: [
-      { label: "Name", basis: "1/5", content: ->(lora) { content_tag(:div, lora.name, class: "p-2") } },
-      { label: "URL", basis: "1/5", content: ->(lora) { content_tag(:div, lora.url_src, class: "p-2") } },
-      { label: "Trigger", basis: "1/5", content: ->(lora) { content_tag(:div, lora.trigger, class: "p-2") } },
-      { label: "Platform", basis: "1/5", content: ->(lora) { content_tag(:div, lora.platform, class: "p-2") } },
-      { label: "Model", basis: "1/5", content: ->(lora) { content_tag(:div, lora.model.name, class: "p-2") } }
+      { label: "Name", basis: "1/4", content: ->(lora) { lora.name } },
+      { label: "Platform", basis: "1/4", content: ->(lora) { lora_url_platform(lora)} },
+      { label: "Trigger", basis: "1/4", content: ->(lora) { lora.trigger } },
+      { label: "Model", basis: "1/4", content: ->(lora) { lora.model.name } }
     ]
   } %>
 </div>

@@ -10,12 +10,12 @@
     <%= link_to "New model", new_model_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div id="models" class="min-w-full">
-    <% @models.each do |model| %>
-      <%= render model %>
-      <p>
-        <%= link_to "Show this model", model, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
-  </div>
+  <%= render partial: "shared/resource_table", locals: { 
+    collection: @models, 
+    headers: [
+      { label: "Name", basis: "1/4", content: ->(model) { model.name } },
+      { label: "URL", basis: "1/2", content: ->(model) { model.url_src } },
+      { label: "Platform", basis: "1/4", content: ->(model) { model.platform } }
+    ]
+  } %>
 </div>
