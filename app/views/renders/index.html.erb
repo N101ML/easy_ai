@@ -10,19 +10,21 @@
     <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div class="border border-gray-300 rounded-md">
-    <!-- Header Row -->
-    <div class="flex font-semibold text-white bg-gray-800">
-      <div class="text-center basis-1/4">Type</div>
-      <div class="text-center basis-1/2">Model/Prompt</div>
-      <div class="text-center basis-1/4">LoRAs</div>
-    </div>
-
-    <!-- Rows for Each Render -->
-    <div class="">
-      <% @renders.each do |render| %>
-        <%= render render %>
-      <% end %>
-    </div>
-  </div>
+  <%= render partial: "shared/resource_table", locals: { 
+    collection: @renders, 
+    headers: [
+      { label: "Type", basis: "1/4", content: ->(render) { link_to(image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover"), image_path(render.images.first)) if render.images.first&.image&.attached? } },
+      { label: "Model/Prompt", basis: "1/2", content: ->(render) do
+        "<div class='text-center border rounded-md'><strong>Model: #{render.model.name}</strong></div><div>#{render.prompt}</div>".html_safe
+      end },
+      { label: "LoRAs", basis: "1/4", content: ->(render) do
+        content = "<div><strong>Guidance Scale:</strong> #{render.guidance_scale}</div>"
+        render.render_loras.each do |render_lora|
+          content += "<div><strong>Lora: #{render_lora.lora.name}</strong> - Scale: #{render_lora.scale}</div>"
+        end
+        content += "<div><strong>Inference Steps:</strong> #{render.steps}</div>"
+        content.html_safe
+      end }
+    ] 
+  } %>
 </div>
