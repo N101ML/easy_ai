@@ -12,17 +12,17 @@
   <% end %>
 
   <div class="my-5">
-    <%= form.label :name %>
+    <%= form.label :name, class: "text-white" %>
     <%= form.text_area :name, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :url_src %>
+    <%= form.label :url_src, class: "text-white" %>
     <%= form.text_area :url_src, rows: 4, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :platform, "Platform" %>
+    <%= form.label :platform, "Platform", class: "text-white" %>
     <%= form.select :platform, options_for_select(['Replicate', 'Civitai', 'Hugging Face']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 

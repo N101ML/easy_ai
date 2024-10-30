@@ -13,6 +13,7 @@ class TrainingsController < ApplicationController
   # GET /trainings/new
   def new
     @training = Training.new
+    @models = Model.all
   end
 
   # GET /trainings/1/edit
@@ -65,6 +66,6 @@ class TrainingsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def training_params
-      params.require(:training).permit(:name, :model_id)
+      params.require(:training).permit(:name, :model_id, :steps, :optimizer, :destination, :trigger_word, :resolution)
     end
 end
