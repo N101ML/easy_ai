@@ -21,12 +21,12 @@ def add_image_html(html_filename, img_filename):
     f.write(f"</div>\n")
 
 # Generate images
-def gen_image(prompt, model, dunc_lora, other_lora, l1, l2, g_scale, steps):
+def gen_image(prompt, model, lora_1, lora_2, l1, l2, g_scale, steps):
   output = replicate.run(
     model,
     input={
       "prompt": prompt,
-      "hf_loras": [f"{dunc_lora}", f"{other_lora}"],
+      "hf_loras": [f"{lora_1}", f"{lora_2}"],
       "lora_scales": [l1,l2],
       "num_outputs": 1,
       "aspect_ratio": "1:1",
@@ -90,3 +90,26 @@ def refine_lora(prompt, model, dunc_lora, other_lora, other_lora_name, lora_2_ra
     for l2 in lora_2_range:
       img = gen_image(prompt, model, dunc_lora, other_lora, standard_lora, l2, g)
       save_image(img, other_lora_name, standard_lora, standard_lora, g)
+
+# def replicate_training(model):
+#   output = replicate.trainings.create(
+#     destinaion="", # This is the replicate model we are going to save to
+#     version=model,
+#     input={
+#       "steps": 1500,
+#       "lora_rank": 64,
+#       "optimizer": "adamw8bit",
+#       "batch_size": 1,
+#       "resolution": 1024,
+#       "autocaption": False,
+#       "input_images": "", # This should be a zip file that includes captions with separate .txt files for each image
+#       "trigger_word": "",
+#       "learning_rate": 0.0005,
+#       "wandb_project": "",
+#       "wandb_save_interval": 100,
+#       "caption_dropout_rate": 0.05,
+#       "cache_latents_to_disk": False,
+#       "wandb_sample_interval": 100
+#     },
+#   )
+#   return output

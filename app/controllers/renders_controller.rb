@@ -22,7 +22,8 @@ class RendersController < ApplicationController
     @models = Model.all
     lora_ids = params[:render][:lora_ids] || []
     loras = Lora.where(id: lora_ids)
-
+    puts "loras: #{loras}"
+    puts "params: #{params}"
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
 
@@ -30,15 +31,20 @@ class RendersController < ApplicationController
     if loras.present?
       loras.each do |lora|
         lora.url_src = tokenize_lora(lora)
-        puts "lora tokenized: #{lora.url_src}"
       end
     end
 
     if @render.save
       # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
-      lora_ids.each_with_index do |lora_id, index|
-        scale = params["lora_scale_#{index + 1}"].to_f
-        @render.render_loras.create(lora_id: lora_id, scale: scale)
+      # lora_ids.each_with_index do |lora_id, index|
+      #   scale = params["lora_scale_#{index + 1}"].to_f
+      #   @render.render_loras.create(lora_id: lora_id, scale: scale)
+      # end
+
+      # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
+      loras.each_with_index do |lora, index|
+        scale = params[:lora_scale][index]
+        @render.render_loras.create(lora_id: lora.id, scale: scale)
       end
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
@@ -94,7 +100,7 @@ class RendersController < ApplicationController
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
-    puts "loras from replicate: #{loras}"
+
     data = {
       prompt: render.prompt,
       model: render.model.url_src,
@@ -107,7 +113,7 @@ class RendersController < ApplicationController
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")
-    puts "data_file: #{data}"
+
     request.body = data.to_json
 
     begin
@@ -126,7 +132,6 @@ class RendersController < ApplicationController
   end
 
   def tokenize_lora(lora)
-    puts "url_src: #{lora.url_src}"
     case lora.platform
     when 'Civitai'
       if ENV["REPLICATE_API_TOKEN"].present?

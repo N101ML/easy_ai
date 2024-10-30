@@ -24,7 +24,7 @@ export default class extends Controller {
       // Create number input field for scale
       const input = document.createElement("input");
       input.type = "number";
-      input.name = `lora_scale_${index + 1}`;
+      input.name = `lora_scale[${lora.id}]`;
       input.step = "0.01";
       input.classList.add(
         "block",

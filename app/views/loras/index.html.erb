@@ -13,10 +13,10 @@
   <%= render partial: "shared/resource_table", locals: { 
     collection: @loras, 
     headers: [
-      { label: "Name", basis: "1/4", content: ->(lora) { lora.name } },
-      { label: "Platform", basis: "1/4", content: ->(lora) { lora_url_platform(lora)} },
+      { label: "Name", basis: "1/4", content: ->(lora) { lora.name }, class: "flex justify-center items-center" },
+      { label: "Platform", basis: "1/4", content: ->(lora) { html_url_platform(lora) }, class: "flex justify-center items-center" },
       { label: "Trigger", basis: "1/4", content: ->(lora) { lora.trigger } },
-      { label: "Model", basis: "1/4", content: ->(lora) { lora.model.name } }
+      { label: "Model", basis: "1/4", content: ->(lora) { html_url_platform(lora.model) }, class: "flex justify-center items-center" }
     ]
   } %>
 </div>

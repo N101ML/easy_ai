@@ -10,9 +10,9 @@
 
   <!-- Rows for Each Item in Collection -->
   <% collection.each do |item| %>
-    <div class="flex text-white border-b border-gray-200">
+    <div class="flex p-2 text-white border-b border-gray-200">
       <% headers.each do |header| %>
-        <div class="basis-<%= header[:basis] %> p-2">
+        <div class="basis-<%= header[:basis] %> <%= header[:class] %>">
           <%= header[:content].call(item) %>
         </div>
       <% end %>

@@ -15,7 +15,7 @@
     headers: [
       { label: "Type", basis: "1/4", content: ->(render) { render_type_content(render) } },
       { label: "Model/Prompt", basis: "1/2", content: ->(render) { render_model_prompt_content(render) } },
-      { label: "LoRAs", basis: "1/4", content: ->(render) { render_loras_content(render) } }
+      { label: "LoRAs", basis: "1/4", content: ->(render) { render_lora_info_content(render) }, class: "flex justify-center items-start" }
     ] 
   } %>
 </div>

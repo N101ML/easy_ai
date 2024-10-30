@@ -1,7 +1,9 @@
 <div class="flex text-white border-b border-gray-200">
   <div class="p-2 text-center basis-1/4">
-    <%= link_to image_path(render.images.first) do %>
-      <%= image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover") if render.images.first&.image&.attached? %>
+    <% if render.images.first&.image&.attached? %>
+      <%= link_to image_path(render.images.first) do %>
+        <%= image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover") %>
+      <% end %>
     <% end %>
   </div>
   <div class="p-2 basis-1/2">
