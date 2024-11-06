@@ -45,7 +45,15 @@
     <%= form.text_field :resolution, value: "1024", class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
+  <%= form_with model: @training, local: true do |form| %>
+    <div class="mb-4">
+      <%= form.label :zip_file, "Upload ZIP File of images:", class: "text-white block mb-4" %>
+      <%= form.file_field :zip_file, class: "text-white" %>
+    </div>
+  <% end %>
+
   <div class="inline">
     <%= form.submit class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
   </div>
+  <%= link_to "Back to trainings", trainings_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
 <% end %>

@@ -4,6 +4,12 @@ class LorasController < ApplicationController
   # GET /loras or /loras.json
   def index
     @loras = Lora.includes(:model)
+    @sort = [:name, :trigger, :platform, :model_id]
+    puts "params: #{params}"
+
+    if params[:sort_by].present? && @sort.include?(params[:sort_by].to_sym)
+      @loras = @loras.order(params[:sort_by])
+    end
   end
 
   # GET /loras/1 or /loras/1.json
@@ -67,5 +73,9 @@ class LorasController < ApplicationController
     # Only allow a list of trusted parameters through.
     def lora_params
       params.require(:lora).permit(:name, :url_src, :platform, :trigger, :model_id, :platform_url)
+    end
+
+    def sorting_params
+      params[:sort_by] || "name"
     end
 end

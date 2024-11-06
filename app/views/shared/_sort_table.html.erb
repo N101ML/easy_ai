@@ -1,0 +1,7 @@
+<div class="flex justify-center text-white">
+  <% sortables.each do |item| %>
+    <div class="p-2 text-center border border-gray-300 rounded-md">
+      <%= link_to item.to_s.titleize, loras_path(sort_by: item), data: { turbo_frame: "sorted_table" } %>
+    </div>
+  <% end %>
+</div>

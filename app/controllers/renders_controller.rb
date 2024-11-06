@@ -104,12 +104,12 @@ class RendersController < ApplicationController
     data = {
       prompt: render.prompt,
       model: render.model.url_src,
+      g_scale: render.guidance_scale,
+      steps: render.steps,
       lora_1: loras[0]&.url_src,
       lora_2: loras[1]&.url_src,
       l1_scale: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
       l2_scale: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
-      g_scale: render.guidance_scale,
-      steps: render.steps
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")

@@ -10,13 +10,22 @@
     <%= link_to "New lora", new_lora_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <%= render partial: "shared/resource_table", locals: { 
-    collection: @loras, 
-    headers: [
-      { label: "Name", basis: "1/4", content: ->(lora) { lora.name }, class: "flex justify-center items-center" },
-      { label: "Platform", basis: "1/4", content: ->(lora) { html_url_platform(lora) }, class: "flex justify-center items-center" },
-      { label: "Trigger", basis: "1/4", content: ->(lora) { lora.trigger } },
-      { label: "Model", basis: "1/4", content: ->(lora) { html_url_platform(lora.model) }, class: "flex justify-center items-center" }
-    ]
-  } %>
+  <%= turbo_frame_tag "sort_options" do %>
+    <%= render partial: "shared/sort_table", locals: {
+          collection: @loras,
+          sortables: @sort
+        } %>
+  <% end %>
+
+  <%= turbo_frame_tag "sorted_table" do %>
+    <%= render partial: "shared/resource_table", locals: { 
+      collection: @loras, 
+      headers: [
+        { label: "Name", basis: "1/4", content: ->(lora) { lora.name }, class: "flex justify-center items-center" },
+        { label: "Platform", basis: "1/4", content: ->(lora) { html_url_platform(lora) }, class: "flex justify-center items-center" },
+        { label: "Trigger", basis: "1/4", content: ->(lora) { lora.trigger }, class: "flex items-center"},
+        { label: "Model", basis: "1/4", content: ->(lora) { html_url_platform(lora.model) }, class: "flex justify-center items-center" }
+      ]
+    } %>
+  <% end %>
 </div>
