@@ -10,12 +10,29 @@
     <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <%= render partial: "shared/resource_table", locals: { 
-    collection: @renders, 
-    headers: [
-      { label: "Type", basis: "1/4", content: ->(render) { render_type_content(render) } },
-      { label: "Model/Prompt", basis: "1/2", content: ->(render) { render_model_prompt_content(render) } },
-      { label: "LoRAs", basis: "1/4", content: ->(render) { render_lora_info_content(render) }, class: "flex justify-center items-start" }
-    ] 
-  } %>
+  <%= turbo_frame_tag "filter_options" do %>
+    <%= render partial: "shared/filter_options", locals: {
+      filter_options: @filter_options
+    } %>
+  <% end %>
+
+  <!-- Sort Table -->
+  <div>
+    <%= render partial: "shared/sort_table", locals: {
+      collection: @renders,
+      sortables: @sort,
+      resource_name: :renders
+    } %>
+  </div>
+
+  <%= turbo_frame_tag "sorted_table" do %>
+    <%= render partial: "shared/resource_table", locals: { 
+      collection: @renders, 
+      headers: [
+        { label: "Type", basis: "1/4", content: ->(render) { render_type_content(render) } },
+        { label: "Model/Prompt", basis: "1/2", content: ->(render) { render_model_prompt_content(render) } },
+        { label: "LoRA Details", basis: "1/4", content: ->(render) { render_lora_info_content(render) }, class: "flex justify-center items-start" }
+      ] 
+    } %>
+  <% end %>
 </div>

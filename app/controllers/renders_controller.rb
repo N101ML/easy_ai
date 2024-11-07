@@ -6,10 +6,14 @@ require 'open-uri'
 class RendersController < ApplicationController
   def index
     @renders = Render.where(render_type: "Image").includes(:images)
+    @sort = [:model_id, :steps, :prompt]
+    @filter_options = [:lora_id, :guidance_scale, :platform]
+
+    @renders = sorted_records(@renders, params[:sort_by], @sort)
   end
 
   def new
-    @render = Render.new
+    @render = Render.new 
     @models = Model.all
   end
 
@@ -22,8 +26,7 @@ class RendersController < ApplicationController
     @models = Model.all
     lora_ids = params[:render][:lora_ids] || []
     loras = Lora.where(id: lora_ids)
-    puts "loras: #{loras}"
-    puts "params: #{params}"
+
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
 

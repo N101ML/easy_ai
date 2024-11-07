@@ -5,11 +5,8 @@ class LorasController < ApplicationController
   def index
     @loras = Lora.includes(:model)
     @sort = [:name, :trigger, :platform, :model_id]
-    puts "params: #{params}"
 
-    if params[:sort_by].present? && @sort.include?(params[:sort_by].to_sym)
-      @loras = @loras.order(params[:sort_by])
-    end
+    @loras = sorted_records(@loras, params[:sort_by], @sort)
   end
 
   # GET /loras/1 or /loras/1.json
@@ -65,17 +62,18 @@ class LorasController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_lora
-      @lora = Lora.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def lora_params
-      params.require(:lora).permit(:name, :url_src, :platform, :trigger, :model_id, :platform_url)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_lora
+    @lora = Lora.find(params[:id])
+  end
 
-    def sorting_params
-      params[:sort_by] || "name"
-    end
+  # Only allow a list of trusted parameters through.
+  def lora_params
+    params.require(:lora).permit(:name, :url_src, :platform, :trigger, :model_id, :platform_url)
+  end
+
+  def sorting_params
+    params[:sort_by] || "name"
+  end
 end

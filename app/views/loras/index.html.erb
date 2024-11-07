@@ -10,12 +10,11 @@
     <%= link_to "New lora", new_lora_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <%= turbo_frame_tag "sort_options" do %>
-    <%= render partial: "shared/sort_table", locals: {
-          collection: @loras,
-          sortables: @sort
-        } %>
-  <% end %>
+  <%= render partial: "shared/sort_table", locals: {
+    collection: @loras,
+    sortables: @sort,
+    resource_name: :loras
+  } %>
 
   <%= turbo_frame_tag "sorted_table" do %>
     <%= render partial: "shared/resource_table", locals: { 
