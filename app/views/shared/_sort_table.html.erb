@@ -10,8 +10,10 @@
   <!-- Dropdown Menu -->
   <div class="absolute right-0 z-10 hidden w-56 mt-2 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" data-dropdown-target="menu">
     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-      <% sortables.each do |item| %>
-        <%= link_to item.to_s.titleize, polymorphic_path(resource_name, sort_by: item), data: { turbo_frame: "sorted_table", action: "click->dropdown#close" }, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" %>
+      <% sortables.each do |sortable| %>
+        <div class="p-2 text-center border border-gray-300 rounded-md">
+          <%= link_to sortable.to_s.titleize, polymorphic_path(resource_name, { sort_by: sortable }.merge(request.query_parameters)), data: { turbo_frame: "sorted_table" } %>
+        </div>
       <% end %>
     </div>
   </div>

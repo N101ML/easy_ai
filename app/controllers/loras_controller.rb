@@ -5,8 +5,22 @@ class LorasController < ApplicationController
   def index
     @loras = Lora.includes(:model)
     @sort = [:name, :trigger, :platform, :model_id]
+    @filters = [:platform, :model_id]
+    @filter_options = {}
 
+    @filters.each do |filter|
+      @filter_options[filter] = Lora.distinct.pluck(filter).compact
+    end
+
+    # Sort Loras
     @loras = sorted_records(@loras, params[:sort_by], @sort)
+
+    @filters.each do |filter|
+      if params[filter].present?
+        filter_values = Array(params[filter])
+        @loras = @loras.where(filter => filter_values)
+      end
+    end    
   end
 
   # GET /loras/1 or /loras/1.json

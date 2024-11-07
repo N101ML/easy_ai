@@ -1,3 +1,32 @@
-<div class="flex justify-center text-white">
+<div class="text-white border rounded-md" data-controller="filter-highlight">
+  <div>
+    <h3 class="p-4 border-b-2 rounded-md">Advanced Filters</h2>
+  </div>
 
-</div>
+  <div class="flex flex-wrap gap-4 p-2">
+    <% @filters.each do |filter| %>
+      <div class="flex flex-col p-2 mb-4">
+        <h3 class="mb-2 text-center"><%= filter.to_s.titleize %></h3>
+        <div class="flex flex-wrap gap-2">
+          <% @filter_options[filter].each do |option| %>
+            <div
+            class="p-2 ml-2 text-center border border-gray-300 rounded-md cursor-pointer"
+            data-filter-highlight-target="filter"
+            data-action="click->filter-highlight#select"
+              data-filter-value="<%= option %>"
+              data-filter-type="<%= filter %>"
+              >
+              <%= link_to option, polymorphic_path(resource_name, { filter => option, sort_by: params[:sort_by] }.merge(request.query_parameters.except(filter.to_s))), data: { turbo_frame: "sorted_table" } %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Reset Button -->
+  <div class="p-4">
+    <%= link_to "Reset Filters", polymorphic_path(resource_name),
+      class: "border px-4 py-2 text-white rounded-md ",
+      data: { action: "click->filter-highlight#reset", turbo_frame: "sorted_table" } %>
+  </div>
