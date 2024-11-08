@@ -1,9 +1,5 @@
 <div class="mb-2 text-white border rounded-md bg-custom-bg-filter-list" data-controller="filter-highlight">
-  <div>
-    <h3 class="p-4 border-b-2 rounded-md">Advanced Filters</h2>
-  </div>
-
-  <div class="flex flex-wrap gap-4 p-2">
+  <div class="flex flex-wrap gap-4 p-2" data-dropdown-target="menu">
     <% @filters.each do |filter| %>
       <div class="flex flex-col p-2 mb-4">
         <h3 class="mb-2 text-center"><%= filter.to_s.titleize %></h3>

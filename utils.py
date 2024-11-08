@@ -30,7 +30,7 @@ def add_image_html(html_filename, img_filename):
     f.write(f"</div>\n")
 
 # Generate images
-def gen_image(prompt, base_model_url, g_scale, steps, lora_1=None, lora_2=None, l1=None, l2=None, num_outputs=1):
+def gen_image(prompt, base_model, g_scale, steps, lora_1=None, lora_2=None, l1=None, l2=None, num_outputs=1):
   # Initialize without LoRAs
   input={
     "prompt": prompt,
@@ -62,7 +62,7 @@ def gen_image(prompt, base_model_url, g_scale, steps, lora_1=None, lora_2=None, 
     input["lora_scale"] = lora_scales[0]
 
   # Call to replicate
-  output = replicate.run(base_model_url, input=input)
+  output = replicate.run(base_model, input=input)
   
   return output[0]
 

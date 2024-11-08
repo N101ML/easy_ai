@@ -46,12 +46,6 @@ class RendersController < ApplicationController
 
     if @render.save
       # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
-      # lora_ids.each_with_index do |lora_id, index|
-      #   scale = params["lora_scale_#{index + 1}"].to_f
-      #   @render.render_loras.create(lora_id: lora_id, scale: scale)
-      # end
-
-      # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
       loras.each_with_index do |lora, index|
         scale = params[:lora_scale][index]
         @render.render_loras.create(lora_id: lora.id, scale: scale)
@@ -106,20 +100,19 @@ class RendersController < ApplicationController
   end
 
   def replicate_image(render, loras)
-
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
 
     data = {
       prompt: render.prompt,
-      model: render.model.url_src,
+      base_model: render.model.url_src,
       g_scale: render.guidance_scale,
       steps: render.steps,
       lora_1: loras[0]&.url_src,
       lora_2: loras[1]&.url_src,
-      l1_scale: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
-      l2_scale: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
+      l1: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
+      l2: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")
@@ -127,6 +120,7 @@ class RendersController < ApplicationController
     request.body = data.to_json
 
     begin
+      # Sending request to Flask
       response = http.request(request)
       if response.code == '200'
         json_response = JSON.parse(response.body)
