@@ -17,6 +17,7 @@ module.exports = {
         "custom-bg-modal": "#F7F6F0",
         "custom-bg-button": "#CFDBD9",
         "custom-bg-button-hover": "#AEBFBD",
+        "custom-bg-filter-list": "#15263a",
       },
     },
   },

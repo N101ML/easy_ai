@@ -8,19 +8,13 @@ class LorasController < ApplicationController
     @filters = [:platform, :model_id]
     @filter_options = {}
 
-    @filters.each do |filter|
-      @filter_options[filter] = Lora.distinct.pluck(filter).compact
-    end
+    # Take filter symbols, iterate and 
+    @filter_options = get_filter_options(@filters, @filter_options, Lora)
 
     # Sort Loras
     @loras = sorted_records(@loras, params[:sort_by], @sort)
 
-    @filters.each do |filter|
-      if params[filter].present?
-        filter_values = Array(params[filter])
-        @loras = @loras.where(filter => filter_values)
-      end
-    end    
+    @loras = apply_filter_conditions(@filters, params, @loras)
   end
 
   # GET /loras/1 or /loras/1.json

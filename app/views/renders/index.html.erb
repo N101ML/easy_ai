@@ -10,17 +10,20 @@
     <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <%= turbo_frame_tag "filter_options" do %>
-    <%= render partial: "shared/filter_options", locals: {
-      filter_options: @filter_options
-    } %>
-  <% end %>
-
   <!-- Sort Table -->
   <div>
     <%= render partial: "shared/sort_table", locals: {
       collection: @renders,
       sortables: @sort,
+      resource_name: :renders
+    } %>
+  </div>
+
+  <!-- Filter List -->
+  <div>
+    <%= render partial: "shared/filter_options", locals: {
+      collection: @renders,
+      filters: @filters,
       resource_name: :renders
     } %>
   </div>

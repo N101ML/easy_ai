@@ -15,4 +15,21 @@ module Sortable
       collection
     end
   end
+
+  def get_filter_options(filters, filter_options, collection_type)
+    filters.each do |filter|
+      filter_options[filter] = collection_type.distinct.pluck(filter).compact
+    end
+    filter_options
+  end
+
+  def apply_filter_conditions(filters, params, collection)
+    filters.each do |filter|
+      if params[filter].present?
+        filter_values = Array(params[filter])
+        collection = collection.where(filter => filter_values)
+      end
+    end
+    collection
+  end
 end

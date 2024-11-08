@@ -7,9 +7,16 @@ class RendersController < ApplicationController
   def index
     @renders = Render.where(render_type: "Image").includes(:images)
     @sort = [:model_id, :steps, :prompt]
-    @filter_options = [:lora_id, :guidance_scale, :platform]
+    @filters = [:render_type, :steps]
+    @filter_options = {}
 
+    # Take filter symbols, iterate and 
+    @filter_options = get_filter_options(@filters, @filter_options, Render)
+
+    # Sort Loras
     @renders = sorted_records(@renders, params[:sort_by], @sort)
+
+    @renders = apply_filter_conditions(@filters, params, @renders)
   end
 
   def new
