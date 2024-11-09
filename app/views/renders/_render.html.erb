@@ -1,10 +1,6 @@
 <div class="flex text-white border-b border-gray-200">
   <div class="p-2 text-center basis-1/4">
-    <% if render.images.first&.image&.attached? %>
-      <%= link_to image_path(render.images.first) do %>
-        <%= image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover") %>
-      <% end %>
-    <% end %>
+    <%= render_type_content(render) %>
   </div>
   <div class="p-2 basis-1/2">
     <div class="text-center border rounded-md">
@@ -14,7 +10,7 @@
       <%= render.prompt %>
     </div>
   </div>
-  <%# Lora Details %>
+  <!-- Lora Details -->
   <div class="flex flex-col p-2 text-left basis-1/4">
     <div>
       <strong>Guidance Scale:</strong>
@@ -30,8 +26,8 @@
       <%= render.steps %>
     </div>
     <div>
-      <strong>Outputs:</strong>
-      <%= render.outputs %>
+      <strong>Number of Outputs:</strong>
+      <%= render.num_outputs %>
     </div>
   </div>
 </div>

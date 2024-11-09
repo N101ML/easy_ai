@@ -53,10 +53,10 @@ class RendersController < ApplicationController
       end
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
-      images = generate_image_via_api(@render, loras)
+      image_urls = generate_image_via_api(@render, loras)
 
-      if images
-        images.each do |image|
+      if image_urls 
+        image_urls.each do |image_url|
           image = @render.images.create(filename: File.basename(image_url))
           image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
         end
@@ -102,7 +102,7 @@ class RendersController < ApplicationController
     end
   end
 
-  def replicate_image(render, loras, outputs=1)
+  def replicate_image(render, loras)
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
@@ -116,7 +116,7 @@ class RendersController < ApplicationController
       lora_2: loras[1]&.url_src,
       l1: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
       l2: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
-      num_outputs: outputs
+      num_outputs: render.num_outputs
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")

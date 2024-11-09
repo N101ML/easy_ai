@@ -1,11 +1,21 @@
 module RendersHelper
   def render_type_content(render)
-    if render.images.first&.image&.attached?
-      link_to(image_tag(url_for(render.images.first.image), alt: "Render Image", class: "object-cover"), image_path(render.images.first), target: "_top")
+    if render.images.any?
+      num_images = render.images.size > 1 ? "grid grid-cols-2 gap-2" : "object-fit"
+      content_tag(:div, class: "#{num_images}") do
+        render.images.map do |image|
+          if image.image.attached?
+            link_to(image_tag(url_for(image.image), alt: "Render Image", class: ""), render_path(render), target: "_top")
+          else
+            "No Image"
+          end
+        end.join.html_safe
+      end
     else
       "No Image"
     end
   end
+
 
   def render_model_prompt_content(render)
     content_tag(:div, class: "text-center rounded-md") do
