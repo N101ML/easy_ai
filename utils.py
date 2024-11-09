@@ -64,7 +64,7 @@ def gen_image(prompt, base_model, g_scale, steps, lora_1=None, lora_2=None, l1=N
   # Call to replicate
   output = replicate.run(base_model, input=input)
   
-  return output[0]
+  return output
 
 # Ensure the directory exists
 def dir_check(lora_name):

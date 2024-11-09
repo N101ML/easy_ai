@@ -33,6 +33,7 @@ class RendersController < ApplicationController
     @models = Model.all
     lora_ids = params[:render][:lora_ids] || []
     loras = Lora.where(id: lora_ids)
+    @num_outputs = params[:num_outputs]
 
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
@@ -52,11 +53,13 @@ class RendersController < ApplicationController
       end
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
-      image_url = generate_image_via_api(@render, loras)
+      images = generate_image_via_api(@render, loras)
 
-      if image_url
-        image = @render.images.create(filename: File.basename(image_url))
-        image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
+      if images
+        images.each do |image|
+          image = @render.images.create(filename: File.basename(image_url))
+          image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
+        end
       end
 
       redirect_to renders_path, notice: 'Render was successfully created.'
@@ -80,7 +83,7 @@ class RendersController < ApplicationController
   private
 
   def render_params
-    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id, :steps)
+    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id, :steps, :num_outputs)
   end
 
 
@@ -99,7 +102,7 @@ class RendersController < ApplicationController
     end
   end
 
-  def replicate_image(render, loras)
+  def replicate_image(render, loras, outputs=1)
     uri = URI('http://localhost:5000/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
@@ -113,6 +116,7 @@ class RendersController < ApplicationController
       lora_2: loras[1]&.url_src,
       l1: render.render_loras.where(lora_id: loras[0]&.id).pluck(:scale).first,
       l2: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
+      num_outputs: outputs
     }
 
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")
@@ -124,7 +128,7 @@ class RendersController < ApplicationController
       response = http.request(request)
       if response.code == '200'
         json_response = JSON.parse(response.body)
-        return json_response['image_url']
+        return json_response['images']
       else
         Rails.logger.error("Flask app returned an error: #{response.code} - #{response.body}")
         return nil

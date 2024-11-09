@@ -21,10 +21,11 @@ def generate_image():
   l2_scale = data.get('l2')
   g_scale = data.get('g_scale')
   steps = data.get('steps')
+  num_outputs = data.get('num_outputs')
 
-  image_url = gen_image(prompt, base_model, g_scale, steps, lora_1, lora_2, l1_scale, l2_scale)
+  images = gen_image(prompt, base_model, g_scale, steps, lora_1, lora_2, l1_scale, l2_scale, num_outputs)
 
-  return jsonify({'image_url': image_url})
+  return jsonify({'images': images})
 
 if __name__ == '__main__':
   app.run(debug=True)

@@ -1,7 +1,7 @@
 <%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales" }) do |form| %>
   <div class="my-5">
     <%= form.label :render_type, "Type", class: "text-white" %>
-    <%= form.select :render_type, options_for_select(['Image']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.select :render_type, options_for_select(['Image', 'Sample']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
@@ -40,10 +40,16 @@
     <% end %>
   </div>
 
-  <%# # Inference Steps %>
+  <!--Inference Steps -->
   <div class="my-3">
     <%= form.label "Inference Steps: ", class: "text-white" %>
     <%= form.number_field :steps, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!-- Number of Outputs -->
+  <div class="my-3">
+    <%= form.label "Number of Outputs: ", class: "text-white" %>
+    <%= form.number_field :num_outputs, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
