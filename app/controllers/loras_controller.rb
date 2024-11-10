@@ -29,6 +29,8 @@ class LorasController < ApplicationController
 
   # GET /loras/1/edit
   def edit
+    @lora = Lora.find(params[:id])
+    @models = Model.all
   end
 
   # POST /loras or /loras.json

@@ -5,18 +5,18 @@ require 'open-uri'
 
 class RendersController < ApplicationController
   def index
-    @renders = Render.where(render_type: "Image").includes(:images)
+    @renders = Render.where(render_type: ["Image", "Sample"]).includes(:images)
     @sort = [:model_id, :steps, :prompt]
     @filters = [:render_type, :steps]
     @filter_options = {}
-
-    # Take filter symbols, iterate and 
+    # Take filter symbols
     @filter_options = get_filter_options(@filters, @filter_options, Render)
-
+    
     # Sort Loras
     @renders = sorted_records(@renders, params[:sort_by], @sort)
 
     @renders = apply_filter_conditions(@filters, params, @renders)
+
   end
 
   def new
@@ -142,10 +142,10 @@ class RendersController < ApplicationController
   def tokenize_lora(lora)
     case lora.platform
     when 'Civitai'
-      if ENV["REPLICATE_API_TOKEN"].present?
-        return lora.url_src + '&token=' + ENV["REPLICATE_API_TOKEN"]
+      if ENV["CIVITAI_API_TOKEN"].present?
+        return lora.url_src + '&token=' + ENV["CIVITAI_API_TOKEN"]
       else
-        raise "REPLICATE_API_TOKEN environment variable is not set"
+        raise "CIVITAI_API_TOKEN environment variable is not set"
       end
     end
     lora.url_src
