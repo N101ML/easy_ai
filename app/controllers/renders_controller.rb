@@ -5,12 +5,13 @@ require 'open-uri'
 
 class RendersController < ApplicationController
   def index
-    @renders = Render.where(render_type: ["Image", "Sample"]).includes(:images)
+    @renders = Render.all
     @sort = [:model_id, :steps, :prompt]
-    @filters = [:render_type, :steps]
+    @filters = [:render_type, :steps, :loras]
     @filter_options = {}
+     
     # Take filter symbols
-    @filter_options = get_filter_options(@filters, @filter_options, Render)
+    @filter_options = get_filter_options(@filters, @filter_options, Render.all)
     
     # Sort Loras
     @renders = sorted_records(@renders, params[:sort_by], @sort)
