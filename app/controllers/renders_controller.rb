@@ -9,15 +9,12 @@ class RendersController < ApplicationController
     @sort = [:model_id, :steps, :prompt]
     @filters = [:render_type, :steps, :loras]
     @filter_options = {}
-     
-    # Take filter symbols
     @filter_options = get_filter_options(@filters, @filter_options, Render.all)
-    
-    # Sort Loras
-    @renders = sorted_records(@renders, params[:sort_by], @sort)
-
+    # Take filter symbols
+    @renders = sorted_records(Render.all, params[:sort_by], @sort)
     @renders = apply_filter_conditions(@filters, params, @renders)
-
+    
+    @pagy, @renders = pagy(@renders)
   end
 
   def new

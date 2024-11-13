@@ -28,6 +28,13 @@
     } %>
   </div>
 
+  <!-- Pagy Navigation Links -->
+  <div class="flex justify-center">
+    <div class="mt-4 text-white">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  </div>
+
   <%= turbo_frame_tag "sorted_table" do %>
     <%= render partial: "shared/resource_table", locals: { 
       collection: @renders, 

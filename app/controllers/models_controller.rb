@@ -3,7 +3,7 @@ class ModelsController < ApplicationController
 
   # GET /models or /models.json
   def index
-    @models = Model.all
+    @pagy, @models = pagy(Model.all)
   end
 
   # GET /models/1 or /models/1.json

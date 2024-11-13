@@ -10,7 +10,7 @@
 
   <!-- Rows for Each Item in Collection -->
   <%= turbo_frame_tag "item_list" do %>
-    <div>
+    <div class="">
       <% collection.each do |item| %>
         <div class="flex p-2 text-white border-b border-gray-200">
           <% headers.each do |header| %>

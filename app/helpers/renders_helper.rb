@@ -1,8 +1,4 @@
 module RendersHelper
-  # def render_type_content(render)
-  #   format_thumbnail(render)
-  # end
-
   def render_model_prompt_content(render)
     content_tag(:div, class: "text-center rounded-md") do
       concat content_tag(:div, render.model.name, class: "border rounded-md")

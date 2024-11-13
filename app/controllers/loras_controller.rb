@@ -13,8 +13,9 @@ class LorasController < ApplicationController
 
     # Sort Loras
     @loras = sorted_records(@loras, params[:sort_by], @sort)
-
     @loras = apply_filter_conditions(@filters, params, @loras)
+
+    @pagy, @loras = pagy(@loras)
   end
 
   # GET /loras/1 or /loras/1.json

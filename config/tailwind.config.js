@@ -18,6 +18,12 @@ module.exports = {
         "custom-bg-button": "#CFDBD9",
         "custom-bg-button-hover": "#AEBFBD",
         "custom-bg-filter-list": "#15263a",
+        "custom-bg-pagy-list": "#2a4c6c",
+      },
+      colors: {
+        pagyBlue: {
+          DEFAULT: "#15263a",
+        },
       },
     },
   },

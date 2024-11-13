@@ -5,9 +5,17 @@
 
   <% content_for :title, "Models" %>
 
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between text-white">
     <h1 class="text-4xl font-bold text-white">Models</h1>
+    <%= "Pagy: #{@pagy.count}/#{Model.count}"%>
     <%= link_to "New model", new_model_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+  </div>
+
+  <!-- Pagy Navigation Links -->
+  <div class="flex justify-center">
+    <div class="mt-4 text-white">
+      <%== pagy_nav(@pagy) %>
+    </div>
   </div>
 
   <%= render partial: "shared/resource_table", locals: { 
