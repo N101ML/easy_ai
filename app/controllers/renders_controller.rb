@@ -104,7 +104,7 @@ class RendersController < ApplicationController
   end
 
   def replicate_image(render, loras)
-    uri = URI('http://localhost:5000/generate_image')
+    uri = URI('http://localhost:5000/replicate/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
 

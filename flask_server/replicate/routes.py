@@ -1,16 +1,10 @@
-import replicate
-import requests
-from PIL import Image
-from io import BytesIO
-from dotenv import load_dotenv
+from flask import Blueprint, request, jsonify
+from .gen_image import gen_image
 import os
-from utils import *
-from flask import Flask, request, jsonify
-from huggingface_hub import hf_hub_download
 
-app = Flask(__name__)
+replicate_gen_image_bp = Blueprint('replicate_gen_image_bp', __name__)
 
-@app.route('/generate_image', methods=['POST'])
+@replicate_gen_image_bp.route('/generate_image', methods=['POST'])
 def generate_image():
   data = request.json
   prompt = data.get('prompt')
@@ -26,6 +20,3 @@ def generate_image():
   images = gen_image(prompt, base_model, g_scale, steps, lora_1, lora_2, l1_scale, l2_scale, num_outputs)
 
   return jsonify({'images': images})
-
-if __name__ == '__main__':
-  app.run(debug=True)

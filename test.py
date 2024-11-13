@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 import os
-from utils import *
+from flask_server.replicate.utils import *
 from flask import Flask, request, jsonify
 from huggingface_hub import hf_hub_download, snapshot_download
 import shutil
