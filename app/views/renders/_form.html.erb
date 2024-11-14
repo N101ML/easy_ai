@@ -1,7 +1,7 @@
 <%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales" }) do |form| %>
   <div class="my-5">
     <%= form.label :render_type, "Type", class: "text-white" %>
-    <%= form.select :render_type, options_for_select(['Image', 'Sample']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.select :render_type, options_for_select(['Image', 'Sample', 'Lora Test']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
@@ -21,20 +21,20 @@
   <!-- Multi-select dropdown for selecting multiple LoRAs -->
   <div class="my-5">
     <%= form.select :lora_ids, 
-    options_from_collection_for_select(Lora.all, :id, :name),
-    { selected: form.object.lora_ids, include_hidden: false },
-    { multiple: true, 
-      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
-      data: { lora_scales_target: "select", action: "lora-scales#updateFields" }
-    }
-  %>
+      options_from_collection_for_select(@loras, :id, :name),
+      { selected: form.object.lora_ids, include_hidden: false },
+      { multiple: true, 
+        class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
+        data: { lora_scales_target: "select", action: "lora-scales#updateFields" }
+      }
+    %>
   </div>
 
-  <!-- Scale fields for each selected LoRA ID -->
+  <!-- Scale fields for each LoRA ID, hidden by default -->
   <div class="my-5" data-lora-scales-target="scalesPlaceholder">
-    <% Lora.all.each do |lora| %>
-      <div class="my-3" data-controller="lora-scale">
-        <%= form.label "Scale for #{lora.name}" %>
+    <% @loras.each do |lora| %>
+      <div class="my-3" data-lora-id="<%= lora.id %>">
+        <%= form.label "Scale for #{lora.name}", class: "block font-medium mt-2 text-white" %>
         <%= form.number_field "lora_scales[#{lora.id}]", step: 0.1, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Scale for #{lora.name}" %>
       </div>
     <% end %>

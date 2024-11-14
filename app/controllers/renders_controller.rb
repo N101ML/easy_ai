@@ -20,6 +20,7 @@ class RendersController < ApplicationController
   def new
     @render = Render.new 
     @models = Model.all
+    @loras = Lora.all
   end
 
   def show
