@@ -1,7 +1,14 @@
-<%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales" }) do |form| %>
+<%= form_with(model: @render, local: true, id: "render-form", data: { controller: "lora-scales", lora_scales_target: "form" }) do |form| %>
   <div class="my-5">
     <%= form.label :render_type, "Type", class: "text-white" %>
-    <%= form.select :render_type, options_for_select(['Image', 'Sample', 'Lora Test']), class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.select :render_type,
+    options_for_select(['Image', 'Sample', 'Lora Test']),
+    {},
+    {
+      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+      data: { lora_scales_target: "renderType", action: "lora-scales#updateRenderType" }
+    }
+  %>
   </div>
 
   <div class="my-5">
@@ -13,9 +20,21 @@
     <%= form.collection_select :model_id, @models, :id, :name, { prompt: "Select a Model" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
-  <div class="my-5">
+  <div class="hidden my-5", data-lora-scales-target="imageGuidanceScale">
     <%= form.label :guidance_scale, "Guidance Scale", class: "text-white" %>
     <%= form.number_field :guidance_scale, step: 0.01, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter guidance scale" %>
+  </div>
+
+  <!-- Guidance Scale Range for Lora Test -->
+  <div class="hidden my-5" data-lora-scales-target="loraTestGuidanceScale">
+    <%= form.label :guidance_scale, "Guidance Scale Range", class: "text-white" %>
+    <div class="flex items-center space-x-2">
+      <%= form.number_field :guidance_scale_min, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Min" %>
+      <span class="text-white">to</span>
+      <%= form.number_field :guidance_scale_max, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Max" %>
+      <%= form.label :guidance_scale_step, "Step Increment", class: "text-white" %>
+      <%= form.number_field :guidance_scale_step, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Step" %>
+    </div>
   </div>
 
   <!-- Multi-select dropdown for selecting multiple LoRAs -->
@@ -35,9 +54,26 @@
     <% @loras.each do |lora| %>
       <div class="my-3" data-lora-id="<%= lora.id %>">
         <%= form.label "Scale for #{lora.name}", class: "block font-medium mt-2 text-white" %>
-        <%= form.number_field "lora_scales[#{lora.id}]", step: 0.1, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Scale for #{lora.name}" %>
+        <%= form.number_field "lora_scales[#{lora.id}]",
+          step: 0.1,
+          class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+          placeholder: "Scale for #{lora.name}",
+          name: "render[lora_scales][#{lora.id}]"
+        %>
       </div>
     <% end %>
+  </div>
+
+  <!-- Lora Scale Range for Lora Test -->
+  <div class="hidden my-5" data-lora-scales-target="loraTestLoraScale">
+    <%= form.label :lora_scale_range, "Lora Scale Range", class: "text-white" %>
+    <div class="flex items-center space-x-2">
+      <%= form.number_field :lora_scale_range_min, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Min" %>
+      <span class="text-white">to</span>
+      <%= form.number_field :lora_scale_range_max, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Max" %>
+      <%= form.label :lora_scale_range_step, "Step Increment", class: "text-white" %>
+      <%= form.number_field :lora_scale_range_step, step: 0.1, class: "w-20 text-center shadow rounded-md border border-gray-400 outline-none px-3 py-2", placeholder: "Step" %>
+    </div>
   </div>
 
   <!--Inference Steps -->

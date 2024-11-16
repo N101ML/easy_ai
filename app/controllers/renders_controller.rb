@@ -28,7 +28,8 @@ class RendersController < ApplicationController
   end
 
   def create
-    @render = Render.new(render_params)
+    @render = Render.new(filtered_params.except(:lora_scales))
+
     @models = Model.all
     lora_ids = params[:render][:lora_ids] || []
     loras = Lora.where(id: lora_ids)
@@ -39,27 +40,18 @@ class RendersController < ApplicationController
 
     # Tokenize
     if loras.present?
-      loras.each do |lora|
+      loras.each do |lora| 
         lora.url_src = tokenize_lora(lora)
       end
     end
 
     if @render.save
       # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
-      loras.each_with_index do |lora, index|
-        scale = params[:lora_scale][index]
-        @render.render_loras.create(lora_id: lora.id, scale: scale)
-      end
+      process_lora_scales(@render, params[:render][:lora_scales])
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
       image_urls = generate_image_via_api(@render, loras)
-
-      if image_urls 
-        image_urls.each do |image_url|
-          image = @render.images.create(filename: File.basename(image_url))
-          image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
-        end
-      end
+      render_save_images(image_urls, @render) if image_urls
 
       redirect_to renders_path, notice: 'Render was successfully created.'
     else
@@ -82,9 +74,40 @@ class RendersController < ApplicationController
   private
 
   def render_params
-    params.require(:render).permit(:prompt, :render_type, :guidance_scale, :model_id, :steps, :num_outputs)
+    params.require(:render).permit(
+      :render_type,
+      :prompt,
+      :model_id,
+      :guidance_scale,
+      :guidance_scale_min,
+      :guidance_scale_max,
+      :guidance_scale_step,
+      :steps,
+      :num_outputs,
+      :lora_scale_range_min,
+      :lora_scale_range_max,
+      :lora_scale_range_step,
+    )
   end
 
+  def filtered_params
+    render_params.tap do |params|
+      case params[:render_type]
+      when "Image"
+        params.except(:guidance_scale_min, :guidance_scale_max, :guidance_scale_step, :lora_scale_range_min, :lora_scale_range_max, :lora_scale_range_step)
+      when "Lora Test"
+        params.except(:guidance_scale)
+      end
+
+      params.delete_if { |_, value| value.blank? }
+    end
+  end
+
+  def process_lora_scales(render, lora_scales)
+    lora_scales.each do |lora_id, lora_scale|
+      render.render_loras.create(lora_id: lora_id, scale: lora_scale)
+    end
+  end
 
   def process_lora_triggers(prompt, loras)
     loras.each_with_index do |lora, index|
@@ -94,10 +117,17 @@ class RendersController < ApplicationController
     prompt
   end
 
+  def render_save_images(image_urls, render)
+    image_urls.each do |image_url|
+      image = render.images.create(filename: File.basename(image_url))
+      image.image.attach(io: URI.open(image_url), filename: File.basename(image_url))
+    end
+  end
+
   def generate_image_via_api(render, loras)
     case render.model.platform
     when "Replicate"
-      replicate_image(render, loras)
+      return replicate_image(render, loras)
     end
   end
 
