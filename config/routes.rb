@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :fine_tunes
   resources :trainings
   resources :loras
   resources :models

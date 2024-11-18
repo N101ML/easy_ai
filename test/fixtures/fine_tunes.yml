@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  platform: MyString
+  platform_source: MyString
+  platform_link: MyString
+  model: one
+
+two:
+  name: MyString
+  platform: MyString
+  platform_source: MyString
+  platform_link: MyString
+  model: two
