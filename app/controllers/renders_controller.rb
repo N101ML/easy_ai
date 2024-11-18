@@ -6,8 +6,9 @@ require 'open-uri'
 class RendersController < ApplicationController
   def index
     @renders = Render.all
+    @models = Model.pluck(:id, :name).to_h
     @sort = [:model_id, :steps, :prompt]
-    @filters = [:render_type, :steps, :loras]
+    @filters = [:render_type, :steps, :loras, :model_id]
     @filter_options = {}
     @filter_options = get_filter_options(@filters, @filter_options, Render.all)
     # Take filter symbols

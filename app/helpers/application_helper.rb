@@ -26,4 +26,12 @@ module ApplicationHelper
       end.join.html_safe
     end
   end
+
+  def titleize_filter(option, filter)
+    if filter == :model_id
+      return @models[option.to_i]
+    else
+      return option
+    end
+  end
 end

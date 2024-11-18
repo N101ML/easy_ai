@@ -12,7 +12,7 @@
               data-filter-value="<%= option %>"
               data-filter-type="<%= filter %>"
               >
-              <%= link_to option, polymorphic_path(resource_name, { filter => option, sort_by: params[:sort_by] }.merge(request.query_parameters.except(filter.to_s))), data: { turbo_frame: "sorted_table" } %>
+              <%= link_to titleize_filter(option, filter), polymorphic_path(resource_name, { filter => option, sort_by: params[:sort_by] }.merge(request.query_parameters.except(filter.to_s))), data: { turbo_frame: "sorted_table" } %>
             </div>
           <% end %>
         </div>

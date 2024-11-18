@@ -5,7 +5,7 @@
     options_for_select(['Image', 'Sample', 'Lora Test']),
     {},
     {
-      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
       data: { lora_scales_target: "renderType", action: "lora-scales#updateRenderType" }
     }
   %>
@@ -39,14 +39,16 @@
 
   <!-- Multi-select dropdown for selecting multiple LoRAs -->
   <div class="my-5">
-    <%= form.select :lora_ids, 
-      options_from_collection_for_select(@loras, :id, :name),
-      { selected: form.object.lora_ids, include_hidden: false },
-      { multiple: true, 
-        class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
-        data: { lora_scales_target: "select", action: "lora-scales#updateFields" }
-      }
-    %>
+    <%= form.select :lora_ids,
+    options_from_collection_for_select(@loras, :id, :name),
+    { selected: form.object.lora_ids, include_hidden: false },
+    {
+      multiple: true,
+      size: 10,
+      class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", 
+      data: { lora_scales_target: "select", action: "lora-scales#updateFields" }
+    }
+  %>
   </div>
 
   <!-- Scale fields for each LoRA ID, hidden by default -->
