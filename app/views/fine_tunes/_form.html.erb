@@ -17,11 +17,6 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :platform, class: "text-white" %>
-    <%= form.text_field :platform, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
     <%= form.select :platform, @platforms, 
       { prompt: "Select a Platform" }, 
       { class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" } %>

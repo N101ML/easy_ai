@@ -11,13 +11,15 @@
   <!-- Rows for Each Item in Collection -->
   <div class="">
     <% collection.each do |item| %>
-      <div class="flex p-2 text-white border-b border-gray-200">
-        <% headers.each do |header| %>
-          <div class="basis-<%= header[:basis] %> <%= header[:class] %>">
-            <%= header[:content].call(item) %>
-          </div>
-        <% end %>
-      </div>
+      <%= turbo_frame_tag dom_id(item) do %>
+        <div class="flex p-2 text-white border-b border-gray-200">
+          <% headers.each do |header| %>
+            <div class="basis-<%= header[:basis] %> <%= header[:class] %>">
+              <%= header[:content].call(item) %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

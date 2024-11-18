@@ -21,7 +21,7 @@
     collection: @models, 
     headers: [
       { label: "Name", basis: "1/4", content: ->(model) {
-          link_to(model.name, model_path(model))
+          link_to(model.name, model_path(model), data: { turbo_frame: dom_id(model) })
         }
       },
       { label: "URL", basis: "1/2", content: ->(model) { model.platform_source } },

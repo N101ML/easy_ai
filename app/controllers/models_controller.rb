@@ -10,6 +10,11 @@ class ModelsController < ApplicationController
   def show
     @model = Model.find(params[:id])
     @fine_tunes = FineTune.includes(:model)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   # GET /models/new

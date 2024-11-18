@@ -1,5 +1,6 @@
 class FineTunesController < ApplicationController
   before_action :set_fine_tune, only: %i[ show edit update destroy ]
+  before_action :set_models
 
   # GET /fine_tunes or /fine_tunes.json
   def index
@@ -13,7 +14,6 @@ class FineTunesController < ApplicationController
   # GET /fine_tunes/new
   def new
     @fine_tune = FineTune.new
-    @models = Model.all
     @platforms = @models.map { |model| model.platform }.uniq
   end
 
@@ -68,5 +68,9 @@ class FineTunesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def fine_tune_params
       params.require(:fine_tune).permit(:name, :platform, :platform_source, :platform_link, :model_id)
+    end
+
+    def set_models
+      @models = Model.all
     end
 end
