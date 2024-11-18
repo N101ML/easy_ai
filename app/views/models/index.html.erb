@@ -7,7 +7,6 @@
 
   <div class="flex items-center justify-between text-white">
     <h1 class="text-4xl font-bold text-white">Models</h1>
-    <%= "Pagy: #{@pagy.count}/#{Model.count}"%>
     <%= link_to "New model", new_model_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
@@ -21,9 +20,12 @@
   <%= render partial: "shared/resource_table", locals: { 
     collection: @models, 
     headers: [
-      { label: "Name", basis: "1/4", content: ->(model) { link_to(model.name, url_for(model), target: "_top") } },
+      { label: "Name", basis: "1/4", content: ->(model) {
+          link_to(model.name, model_path(model))
+        }
+      },
       { label: "URL", basis: "1/2", content: ->(model) { model.platform_source } },
       { label: "Platform", basis: "1/4", content: ->(model) { model.platform } }
     ]
-  } %>
+  }%>
 </div>

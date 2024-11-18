@@ -1,7 +1,8 @@
 class Model < ApplicationRecord
-  has_many :renders, dependent: :destroy
+  has_many :renders, dependent: :nullify
   has_many :render_loras, through: :renders
   has_many :loras
+  has_many :fine_tunes
 
   validates :name, :company, :platform, :platform_source, presence: true
 

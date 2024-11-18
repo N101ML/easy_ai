@@ -8,6 +8,8 @@ class ModelsController < ApplicationController
 
   # GET /models/1 or /models/1.json
   def show
+    @model = Model.find(params[:id])
+    @fine_tunes = FineTune.includes(:model)
   end
 
   # GET /models/new

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_17_173350) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_18_150920) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -37,6 +37,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_17_173350) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "fine_tunes", force: :cascade do |t|
+    t.string "name"
+    t.string "platform"
+    t.string "platform_source"
+    t.string "platform_link"
+    t.integer "model_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["model_id"], name: "index_fine_tunes_on_model_id"
   end
 
   create_table "images", force: :cascade do |t|
@@ -82,7 +93,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_17_173350) do
   create_table "renders", force: :cascade do |t|
     t.string "render_type"
     t.float "guidance_scale"
-    t.integer "model_id", null: false
+    t.integer "model_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "prompt"
@@ -106,6 +117,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_17_173350) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "fine_tunes", "models"
   add_foreign_key "images", "renders"
   add_foreign_key "loras", "models"
   add_foreign_key "render_loras", "loras"
