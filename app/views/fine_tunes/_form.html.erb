@@ -1,6 +1,6 @@
 <%= form_with(model: fine_tune, class: "contents") do |form| %>
   <% if fine_tune.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
+    <div id="error_explanation" class="px-3 py-2 mt-3 font-medium text-red-500 rounded-lg bg-red-50">
       <h2><%= pluralize(fine_tune.errors.count, "error") %> prohibited this fine_tune from being saved:</h2>
 
       <ul>
@@ -12,28 +12,33 @@
   <% end %>
 
   <div class="my-5">
-    <%= form.label :name %>
+    <%= form.label :name, class: "text-white" %>
     <%= form.text_field :name, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :platform %>
+    <%= form.label :platform, class: "text-white" %>
     <%= form.text_field :platform, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :platform_source %>
+    <%= form.select :platform, @platforms, 
+      { prompt: "Select a Platform" }, 
+      { class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" } %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :platform_source, class: "text-white" %>
     <%= form.text_field :platform_source, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :platform_link %>
+    <%= form.label :platform_link, class: "text-white" %>
     <%= form.text_field :platform_link, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="my-5">
-    <%= form.label :model_id %>
-    <%= form.text_field :model_id, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    <%= form.collection_select :model_id, @models, :id, :name, { prompt: "Select a Model" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">

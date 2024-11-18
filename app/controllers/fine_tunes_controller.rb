@@ -13,6 +13,8 @@ class FineTunesController < ApplicationController
   # GET /fine_tunes/new
   def new
     @fine_tune = FineTune.new
+    @models = Model.all
+    @platforms = @models.map { |model| model.platform }.uniq
   end
 
   # GET /fine_tunes/1/edit
