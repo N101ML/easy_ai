@@ -41,7 +41,7 @@
         { label: "Name", basis: "1/4", content: ->(lora) { link_to lora.name, lora_path(lora), target: "_top" }, class: "flex justify-center items-center" },
         { label: "Platform", basis: "1/4", content: ->(lora) { html_url_platform(lora) }, class: "flex justify-center items-center" },
         { label: "Trigger", basis: "1/4", content: ->(lora) { lora.trigger }, class: "flex items-center"},
-        { label: "Model", basis: "1/4", content: ->(lora) { html_url_platform(lora.model) }, class: "flex justify-center items-center" }
+        { label: "Model", basis: "1/4", content: ->(lora) { html_url_platform(lora) if lora.model }, class: "flex justify-center items-center" }
       ]
     } %>
   <% end %>

@@ -4,17 +4,13 @@ class ModelsController < ApplicationController
   # GET /models or /models.json
   def index
     @pagy, @models = pagy(Model.all)
+    @fine_tunes = FineTune.includes(:model)
   end
 
   # GET /models/1 or /models/1.json
   def show
     @model = Model.find(params[:id])
     @fine_tunes = FineTune.includes(:model)
-
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
   end
 
   # GET /models/new

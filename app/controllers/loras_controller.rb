@@ -3,11 +3,11 @@ class LorasController < ApplicationController
 
   # GET /loras or /loras.json
   def index
-    @loras = Lora.includes(:model)
+    @loras = Lora.all
+    @models = Model.all
     @sort = [:name, :trigger, :platform, :model_id]
     @filters = [:platform, :model_id]
     @filter_options = {}
-
     # Take filter symbols, iterate and 
     @filter_options = get_filter_options(@filters, @filter_options, Lora)
 

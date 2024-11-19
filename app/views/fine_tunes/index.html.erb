@@ -6,16 +6,17 @@
   <% content_for :title, "Fine tunes" %>
 
   <div class="flex items-center justify-between">
-    <h1 class="text-4xl font-bold text-white">Fine tunes</h1>
-    <%= link_to "New fine tune", new_fine_tune_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+    <h1 class="text-4xl font-bold text-white">Fine Tunes for <%= @model.name %></h1>
+    <%= link_to "New fine tune", new_model_fine_tune_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
 
-  <div id="fine_tunes" class="min-w-full">
-    <% @fine_tunes.each do |fine_tune| %>
-      <%= render fine_tune %>
-      <p>
-        <%= link_to "Show this fine tune", fine_tune, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
-  </div>
+  <%= render partial: "shared/resource_table", locals: { 
+    collection: @fine_tunes, 
+    headers: [
+      { label: "Name", basis: "1/4", content: ->(fine_tune) { fine_tune.name } },
+      { label: "Platform", basis: "1/4", content: ->(fine_tune) { fine_tune.platform } },
+      { label: "Platform Link", basis: "1/4", content: ->(fine_tune) { fine_tune.platform_link } },
+      { label: "Source", basis: "1/4", content: ->(fine_tune) { link_to "source", fine_tune.platform_source }, class: "text-center" }
+    ],
+  }%>
 </div>

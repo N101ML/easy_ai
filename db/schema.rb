@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_18_150920) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_19_193029) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -62,7 +62,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_150920) do
     t.text "name"
     t.text "url_src"
     t.text "trigger"
-    t.integer "model_id", null: false
+    t.integer "model_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "platform"
@@ -119,7 +119,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_150920) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "fine_tunes", "models"
   add_foreign_key "images", "renders"
-  add_foreign_key "loras", "models"
+  add_foreign_key "loras", "models", on_delete: :nullify
   add_foreign_key "render_loras", "loras"
   add_foreign_key "render_loras", "renders"
   add_foreign_key "renders", "models"

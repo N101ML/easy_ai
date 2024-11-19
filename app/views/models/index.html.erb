@@ -20,12 +20,11 @@
   <%= render partial: "shared/resource_table", locals: { 
     collection: @models, 
     headers: [
-      { label: "Name", basis: "1/4", content: ->(model) {
-          link_to(model.name, model_path(model), data: { turbo_frame: dom_id(model) })
-        }
-      },
-      { label: "URL", basis: "1/2", content: ->(model) { model.platform_source } },
-      { label: "Platform", basis: "1/4", content: ->(model) { model.platform } }
-    ]
+      { label: "Name", basis: "1/5", content: ->(model) { link_to model.name, model_path(model) } },
+      { label: "", basis: "1/5", content: -> (model) { link_to "Fine Tunes", model_fine_tunes_path(model) } },
+      { label: "Company", basis: "1/5", content: ->(model) { model.company } },
+      { label: "Platform", basis: "1/5", content: ->(model) { model.platform } },
+      { label: "Source", basis: "1/5", content: ->(model) { link_to "Link", model.platform_link }, class: "text-center" }
+    ],
   }%>
 </div>

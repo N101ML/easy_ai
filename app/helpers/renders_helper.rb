@@ -1,8 +1,14 @@
 module RendersHelper
   def render_model_prompt_content(render)
-    content_tag(:div, class: "text-center rounded-md") do
-      concat content_tag(:div, render.model.name, class: "border rounded-md")
-      concat content_tag(:div, render.prompt)
+    if render.model.nil?
+      content_tag(:div, class: "text-center rounded-md") do
+         concat content_tag(:div, render.prompt)
+      end
+    else
+      content_tag(:div, class: "text-center rounded-md") do
+        concat content_tag(:div, render.model.name, class: "border rounded-md")
+        concat content_tag(:div, render.prompt)
+      end
     end
   end
 
