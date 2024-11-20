@@ -1,4 +1,4 @@
-<div class="border border-gray-300 rounded-md">
+<div class="border-t border-l border-r border-gray-300 rounded-t-md" data-controller="fine-tune">
   <!-- Header Row -->
   <div class="flex font-semibold text-white bg-gray-800">
     <% headers.each do |header| %>
@@ -13,11 +13,16 @@
     <% collection.each do |item| %>
       <div class="flex p-2 text-white border-b border-gray-200">
         <% headers.each do |header| %>
-          <div class="basis-<%= header[:basis] %> <%= header[:class] %>">
+          <div class="basis-<%= header[:basis] %> <%= header[:class] %>" data-action="<%= header[:data] %>">
             <%= header[:content].call(item) %>
           </div>
         <% end %>
       </div>
     <% end %>
+    <div class="hidden text-white" data-fine-tune-target="fineTunes">
+      <div class="text-center bg-blue-400 basis-2/5">
+        <h3>Fine Tunes Here!</h3>
+      </div>
+    </div>
   </div>
 </div>

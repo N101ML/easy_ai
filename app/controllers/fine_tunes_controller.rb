@@ -5,7 +5,7 @@ class FineTunesController < ApplicationController
   # GET /fine_tunes or /fine_tunes.json
   def index
     @model = Model.find(params[:model_id])
-    @fine_tunes = FineTune.all
+    @fine_tunes = @model.fine_tunes
   end
 
   # GET /fine_tunes/1 or /fine_tunes/1.json
