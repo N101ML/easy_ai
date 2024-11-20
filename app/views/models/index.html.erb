@@ -18,7 +18,8 @@
   </div>
 
   <%= render partial: "shared/resource_table", locals: { 
-    collection: @models, 
+    collection: @models,
+    fine_tunes: @fine_tunes,
     headers: [
       { label: "Name", basis: "1/5", content: ->(model) { link_to model.name, model_path(model) } },
       { label: "", basis: "1/5", content: -> (model){
