@@ -16,7 +16,8 @@ class FineTunesController < ApplicationController
 
   # GET /fine_tunes/new
   def new
-    @fine_tune = FineTune.new
+    @model = Model.find(params[:model_id])
+    @fine_tune = @model.fine_tunes.build
     @platforms = @models.map { |model| model.platform }.uniq
   end
 

@@ -20,12 +20,15 @@
       </div>
     <% end %>
     <div class="hidden text-white" data-fine-tune-target="fineTunes">
-      <div class="p-2 bg-blue-400 rounded-md basis-2/5">
+      <div class="p-2 bg-blue-400 rounded-md basis-3/5">
         <% if @fine_tunes %>
           <% @fine_tunes.each do |fine_tune| %>
-            <h3>Platform: <%= fine_tune.platform %></h3>
-            <h3>Source: <%= fine_tune.platform_source %></h3>
-            <h3>Link: <%= fine_tune.platform_link %></h3>
+            <div class="p-2 m-2 border rounded-md">
+              <h3>Name: <%= fine_tune.name %></h3>
+              <h3>Platform: <%= fine_tune.platform %></h3>
+              <h3>Source: <%= fine_tune.platform_source %></h3>
+              <h3>Link: <%= fine_tune.platform_link %></h3>
+            </div>
           <% end %>
         <% end %>
       </div>

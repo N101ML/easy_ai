@@ -7,7 +7,7 @@
     <%= render @fine_tune %>
 
     <%= link_to "Edit this fine tune", edit_fine_tune_path(@fine_tune), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Back to fine tunes", model_fine_tunes_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Back to fine tunes", model_fine_tunes_path(@fine_tune), class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <div class="inline-block ml-2">
       <%= button_to "Destroy this fine tune", @fine_tune, method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
     </div>

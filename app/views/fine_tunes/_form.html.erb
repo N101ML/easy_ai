@@ -1,4 +1,4 @@
-<%= form_with(model: fine_tune, class: "contents") do |form| %>
+<%= form_with(model: [model, fine_tune], class: "contents") do |form| %>
   <% if fine_tune.errors.any? %>
     <div id="error_explanation" class="px-3 py-2 mt-3 font-medium text-red-500 rounded-lg bg-red-50">
       <h2><%= pluralize(fine_tune.errors.count, "error") %> prohibited this fine_tune from being saved:</h2>
@@ -10,6 +10,8 @@
       </ul>
     </div>
   <% end %>
+
+  <%= form.hidden_field :model_id, value: model.id %>
 
   <div class="my-5">
     <%= form.label :name, class: "text-white" %>
@@ -30,10 +32,6 @@
   <div class="my-5">
     <%= form.label :platform_link, class: "text-white" %>
     <%= form.text_field :platform_link, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.collection_select :model_id, @models, :id, :name, { prompt: "Select a Model" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
   </div>
 
   <div class="inline">
