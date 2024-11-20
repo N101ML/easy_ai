@@ -18,7 +18,7 @@ module ApplicationHelper
   def format_thumbnail(object, link_target: :object)
     return link_to("No Image", url_for(object), target: "_top") unless object.respond_to?(:images) && object.images.any?
 
-    num_images_class = object.images.size > 1 ? "grid grid-cols-2 gap-2" : "object-fit"
+    num_images_class = object.images.size > 1 ? "grid grid-cols-2 gap-2" : ""
     content_tag(:div, class: num_images_class) do
       object.images.map do |image|
         link_path = thumbnail_link_target(object, image, link_target)

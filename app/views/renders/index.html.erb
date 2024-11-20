@@ -4,34 +4,38 @@
   <% end %>
 
   <% content_for :title, "Renders" %>
+  <h1 class="text-4xl font-bold text-white">Renders</h1>
 
-  <div class="flex items-center justify-between text-white">
-    <h1 class="text-4xl font-bold">Renders</h1>
-    <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
-  </div>
+  <div data-controller="filter-highlight">
+    <div class="flex justify-between">
+      <!-- Sort Table -->
+      <div>
+        <%= render partial: "shared/sort_table", locals: {
+          collection: @renders,
+          sortables: @sort,
+          resource_name: :renders
+        } %>
+      </div>
 
-  <!-- Sort Table -->
-  <div>
-    <%= render partial: "shared/sort_table", locals: {
-      collection: @renders,
-      sortables: @sort,
-      resource_name: :renders
-    } %>
-  </div>
+      <!-- Pagy Navigation Links -->
+      <div class="flex justify-center">
+        <div class="mt-4 text-white">
+          <%== pagy_nav(@pagy) %>
+        </div>
+      </div>
 
-  <!-- Filter List -->
-  <div>
-    <%= render partial: "shared/filter_options", locals: {
-      collection: @renders,
-      filters: @filters,
-      resource_name: :renders
-    } %>
-  </div>
+      <!-- Filter List -->
+      <div>
+        <%= render partial: "shared/filter_options", locals: {
+          collection: @renders,
+          filters: @filters,
+          resource_name: :renders
+        } %>
+      </div>
+    </div>
 
-  <!-- Pagy Navigation Links -->
-  <div class="flex justify-center">
-    <div class="mt-4 text-white">
-      <%== pagy_nav(@pagy) %>
+    <div data-filter-highlight-target="destination">
+
     </div>
   </div>
 
@@ -45,4 +49,8 @@
       ] 
     } %>
   <% end %>
+
+  <div class="flex items-center justify-between text-white">
+    <%= link_to "New render", new_render_path, class: "rounded-lg py-2 px-5 bg-blue-600 text-white block font-medium" %>
+  </div>
 </div>

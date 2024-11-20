@@ -1,8 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["filter"];
+  static targets = ["filter", "table", "destination"];
   selectedFilters = new Map();
+  tableToggle = false;
 
   connect() {
     const url = new URL(window.location.href);
@@ -17,6 +18,49 @@ export default class extends Controller {
     });
   }
 
+  handleClick() {
+    this.toggleFilters();
+  }
+
+  toggleFilters() {
+    if (this.tableToggle) {
+      this.hideFilters();
+    } else {
+      this.showFilters();
+    }
+  }
+
+  showFilters() {
+    const tableElement = this.tableTarget;
+    const destinationElement = this.destinationTarget;
+
+    if (tableElement && destinationElement) {
+      tableElement.classList.remove("hidden");
+      tableElement.classList.add("block");
+      destinationElement.parentNode.insertBefore(
+        tableElement,
+        destinationElement
+      );
+    } else {
+      console.error("Table or destination element not found");
+    }
+
+    this.tableToggle = true;
+  }
+
+  hideFilters() {
+    const tableElement = this.tableTarget;
+
+    if (tableElement) {
+      tableElement.classList.add("hidden");
+      tableElement.classList.remove("block");
+    } else {
+      console.error("Filter element not found.");
+    }
+
+    this.tableToggle = false;
+  }
+
   select(event) {
     const filter = event.currentTarget;
     const filterValue = filter.dataset.filterValue;
@@ -27,6 +71,12 @@ export default class extends Controller {
     this.toggleSelectedFilter(filterType, filterValue);
 
     this.updateUrl();
+
+    const tableElement = this.tableTarget;
+    if (tableElement) {
+      tableElement.classList.remove("hidden");
+      tableElement.classList.add("block");
+    }
   }
 
   toggleSelectedFilter(filterType, filterValue) {
