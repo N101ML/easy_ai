@@ -1,36 +1,29 @@
-<div class="relative inline-block mb-2 text-left">
-  <!-- Toggle Filters Button -->
-  <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500" data-action="click->filter-highlight#handleClick">
-    Toggle Filters
-  </button>
-
-  <div class="hidden mb-2 text-white border rounded-md bg-custom-bg-filter-list" data-filter-highlight-target="table">
-    <div class="flex flex-wrap gap-4 p-2">
-      <% @filters.each do |filter| %>
-        <div class="flex flex-col p-2 mb-4">
-          <h3 class="mb-2 text-center"><%= filter.to_s.titleize %></h3>
-          <div class="flex flex-wrap gap-2">
-            <% @filter_options[filter].each do |option| %>
-              <div
-              class="p-2 ml-2 text-center border border-gray-300 rounded-md cursor-pointer"
+<div class="mb-2 text-white bg-gray-800 border rounded-md">
+  <div class="flex flex-wrap gap-4 p-2">
+    <% @filters.each do |filter| %>
+      <div class="flex flex-col p-2 mb-4">
+        <h3 class="mb-2 text-center"><%= filter.to_s.titleize %></h3>
+        <div class="flex flex-wrap gap-2">
+          <% @filter_options[filter].each do |option| %>
+            <div
+              class="p-2 text-center border border-gray-300 rounded-md cursor-pointer"
               data-filter-highlight-target="filter"
               data-action="click->filter-highlight#select"
-                data-filter-value="<%= option %>"
-                data-filter-type="<%= filter %>"
-                >
-                <%= link_to titleize_filter(option, filter), polymorphic_path(resource_name, { filter => option, sort_by: params[:sort_by] }.merge(request.query_parameters.except(filter.to_s))), data: { turbo_frame: "sorted_table" } %>
-              </div>
-            <% end %>
-          </div>
+              data-filter-value="<%= option %>" 
+              data-filter-type="<%= filter %>"
+              >
+              <span><%= titleize_filter(option, filter) %></span>
+            </div>
+          <% end %>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
+  </div>
 
-    <!-- Reset Button -->
-    <div class="p-4">
-      <%= link_to "Reset Filters", polymorphic_path(resource_name),
-        class: "border px-4 py-2 text-white rounded-md ",
-        data: { action: "click->filter-highlight#reset", turbo_frame: "sorted_table" } %>
-    </div>
+  <!-- Reset Button -->
+  <div class="p-4">
+    <%= link_to "Reset Filters", "#",
+      class: "px-4 py-2 text-white border rounded-md",
+      data: { action: "click->filter-highlight#reset" } %>
   </div>
 </div>

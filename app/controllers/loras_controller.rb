@@ -16,6 +16,20 @@ class LorasController < ApplicationController
     @loras = apply_filter_conditions(@filters, params, @loras)
 
     @pagy, @loras = pagy(@loras)
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "loras_table", 
+          partial: "shared/resource_table",
+          locals: { 
+            collection: @loras, 
+            headers: view_context.loras_table_headers
+          }
+        )
+      end
+    end
   end
 
   # GET /loras/1 or /loras/1.json

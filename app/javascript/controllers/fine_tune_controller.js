@@ -6,7 +6,7 @@ export default class extends Controller {
   fineTunesToggle = false;
 
   connect() {
-    console.log("Connected");
+    console.log("fine-tune controller: connected");
   }
 
   handleClick(event) {

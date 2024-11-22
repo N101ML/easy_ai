@@ -1,126 +1,81 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["filter", "table", "destination"];
-  selectedFilters = new Map();
-  tableToggle = false;
+  static targets = ["filter", "table"];
+  static values = { activeTable: String };
 
   connect() {
-    const url = new URL(window.location.href);
-    this.filterTargets.forEach((filter) => {
-      const filterValue = filter.dataset.filterValue;
-      const filterType = filter.dataset.filterType;
-
-      if (url.searchParams.getAll(`${filterType}[]`).includes(filterValue)) {
-        filter.classList.add("bg-blue-500", "text-green");
-        this.addToSelectedFilters(filterType, filterValue);
-      }
-    });
-  }
-
-  handleClick() {
-    this.toggleFilters();
-  }
-
-  toggleFilters() {
-    if (this.tableToggle) {
-      this.hideFilters();
-    } else {
-      this.showFilters();
-    }
-  }
-
-  showFilters() {
-    const tableElement = this.tableTarget;
-    const destinationElement = this.destinationTarget;
-
-    if (tableElement && destinationElement) {
-      tableElement.classList.remove("hidden");
-      tableElement.classList.add("block");
-      destinationElement.parentNode.insertBefore(
-        tableElement,
-        destinationElement
-      );
-    } else {
-      console.error("Table or destination element not found");
-    }
-
-    this.tableToggle = true;
-  }
-
-  hideFilters() {
-    const tableElement = this.tableTarget;
-
-    if (tableElement) {
-      tableElement.classList.add("hidden");
-      tableElement.classList.remove("block");
-    } else {
-      console.error("Filter element not found.");
-    }
-
-    this.tableToggle = false;
+    console.log("filter-hightlight: connected");
+    this.updateActiveFilters();
+    this.updateTable();
   }
 
   select(event) {
-    const filter = event.currentTarget;
-    const filterValue = filter.dataset.filterValue;
-    const filterType = filter.dataset.filterType;
+    console.log("a filter was selected");
 
-    filter.classList.toggle("bg-blue-500");
-    filter.classList.toggle("text-green");
-    this.toggleSelectedFilter(filterType, filterValue);
+    const filterElement = event.currentTarget;
+    const filterType = filterElement.dataset.filterType;
+    const filterValue = filterElement.dataset.filterValue;
+    const url = new URL(window.location);
 
-    this.updateUrl();
+    // Manage query params
+    const params = new URLSearchParams(url.search);
+    const filterParam = `${filterType}:${filterValue}`;
+    const filters = params.getAll("filters[]");
 
-    const tableElement = this.tableTarget;
-    if (tableElement) {
-      tableElement.classList.remove("hidden");
-      tableElement.classList.add("block");
-    }
-  }
-
-  toggleSelectedFilter(filterType, filterValue) {
-    if (this.selectedFilters.has(filterType)) {
-      const values = this.selectedFilters.get(filterType);
-      values.has(filterValue)
-        ? values.delete(filterValue)
-        : values.add(filterValue);
+    if (filters.includes(filterParam)) {
+      // Remove Filter
+      params.delete("filters[]");
+      filters
+        .filter((f) => f != filterParam)
+        .forEach((f) => params.append("filters[]", f));
+      filterElement.classList.remove("bg-blue-500", "text-green");
     } else {
-      this.selectedFilters.set(filterType, new Set([filterValue]));
+      // Add filter
+      params.append("filters[]", filterParam);
+      filterElement.classList.add("bg-blue-500", "text-green");
     }
-  }
 
-  addToSelectedFilters(filterType, filterValue) {
-    if (!this.selectedFilters.has(filterType)) {
-      this.selectedFilters.set(filterType, new Set());
-    }
-    this.selectedFilters.get(filterType).add(filterValue);
-  }
-
-  updateUrl() {
-    const url = new URL(window.location.href);
-
-    this.selectedFilters.forEach((values, type) => {
-      url.searchParams.delete(`${type}[]`);
-    });
-
-    this.selectedFilters.forEach((values, type) => {
-      values.forEach((value) => {
-        url.searchParams.append(`${type}[]`, value);
-      });
-    });
+    // Update URL without reloading
+    url.search = params.toString();
+    window.history.replaceState({}, "", url);
 
     Turbo.visit(url, { action: "replace" });
   }
 
-  reset() {
-    this.filterTargets.forEach((filter) => {
-      filter.classList.remove("bg-blue-500", "text-green");
-    });
-    this.selectedFilters.clear();
+  updateActiveFilters() {
+    const url = new URL(window.location);
+    const params = new URLSearchParams(url.search);
+    const filters = params.getAll("filters[]");
 
-    const url = new URL(window.location.href);
-    url.searchParams.clear();
-    Turbo.visi(url, { action: "replace" });
+    this.filterTargets.forEach((filterElement) => {
+      const filterType = filterElement.dataset.filterType;
+      const filterValue = filterElement.dataset.filterValue;
+      const filterParam = `${filterType}:${filterValue}`;
+
+      if (filters.includes(filterParam)) {
+        filterElement.classList.add("bg-blue-500", "text-green");
+      } else {
+        filterElement.classList.remove("bg-blue-500", "text-green");
+      }
+    });
+  }
+
+  updateTable() {
+    console.log(`active: ${this.activeTableValue}`);
+    if (
+      this.activeTableValue === "hidden" &&
+      this.tableTarget.classList.contains("hidden") == false
+    ) {
+      this.tableTarget.classList.add("hidden");
+    } else {
+      this.tableTarget.classList.remove("hidden");
+    }
+  }
+
+  toggle() {
+    this.activeTableValue =
+      this.activeTableValue === "hidden" ? "visible" : "hidden";
+    this.updateTable();
   }
 }

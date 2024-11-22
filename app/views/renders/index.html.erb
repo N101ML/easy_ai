@@ -12,7 +12,7 @@
       <div>
         <%= render partial: "shared/sort_table", locals: {
           collection: @renders,
-          sortables: @sort,
+          sortables: @sort_options,
           resource_name: :renders
         } %>
       </div>
@@ -24,30 +24,30 @@
         </div>
       </div>
 
-      <!-- Filter List -->
       <div>
-        <%= render partial: "shared/filter_options", locals: {
-          collection: @renders,
-          filters: @filters,
-          resource_name: :renders
-        } %>
+        <!-- Toggle Filters Button -->
+        <button type="button" class="justify-center w-full px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md selection:inline-flex hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500" data-action="filter-highlight#toggle">
+          Toggle Filters
+        </button>
       </div>
     </div>
 
-    <div data-filter-highlight-target="destination">
-
+    <!-- Filter List -->
+    <div data-filter-highlight-active-table-value="hidden" data-filter-highlight-target="table">
+      <%= render partial: "shared/filter_options", locals: {
+              collection: @renders,
+              filters: @filters, 
+              resource_name: :renders,
+              frame_id: "renders_table"
+            } %>
     </div>
   </div>
 
-  <%= turbo_frame_tag "sorted_table" do %>
+  <%= turbo_frame_tag "renders_table" do %>
     <%= render partial: "shared/resource_table", locals: { 
       collection: @renders, 
-      headers: [
-        { label: "Type", basis: "1/4", content: ->(render) { format_thumbnail(render) } },
-        { label: "Model/Prompt", basis: "1/2", content: ->(render) { render_model_prompt_content(render) } },
-        { label: "LoRA Details", basis: "1/4", content: ->(render) { render_lora_info_content(render) }, class: "flex justify-center items-start" }
-      ] 
-    } %>
+      headers: renders_table_headers
+  } %>
   <% end %>
 
   <div class="flex items-center justify-between text-white">

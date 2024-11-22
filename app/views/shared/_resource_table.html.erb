@@ -9,29 +9,33 @@
   </div>
 
   <!-- Rows for Each Item in Collection -->
-  <div class="">
-    <% collection.each do |item| %>
-      <div class="flex p-2 text-white border-gray-200">
-        <% headers.each do |header| %>
-          <div class="basis-<%= header[:basis] %> <%= header[:class] %>" data-action="<%= header[:data] %>">
-            <%= header[:content].call(item) %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-    <div class="hidden text-white" data-fine-tune-target="fineTunes">
-      <div class="p-2 bg-blue-400 rounded-md basis-3/5">
-        <% if @fine_tunes %>
-          <% @fine_tunes.each do |fine_tune| %>
-            <div class="p-2 m-2 border rounded-md">
-              <h3>Name: <%= fine_tune.name %></h3>
-              <h3>Platform: <%= fine_tune.platform %></h3>
-              <h3>Source: <%= fine_tune.platform_source %></h3>
-              <h3>Link: <%= fine_tune.platform_link %></h3>
+  <% if collection.any? %>
+    <div class="">
+      <% collection.each do |item| %>
+        <div class="flex p-2 text-white border-gray-200">
+          <% headers.each do |header| %>
+            <div class="basis-<%= header[:basis] %> <%= header[:class] %>" data-action="<%= header[:data] %>">
+              <%= header[:content].call(item) %>
             </div>
           <% end %>
-        <% end %>
+        </div>
+      <% end %>
+      <div class="hidden text-white" data-fine-tune-target="fineTunes">
+        <div class="p-2 bg-blue-400 rounded-md basis-3/5">
+          <% if @fine_tunes %>
+            <% @fine_tunes.each do |fine_tune| %>
+              <div class="p-2 m-2 border rounded-md">
+                <h3>Name: <%= fine_tune.name %></h3>
+                <h3>Platform: <%= fine_tune.platform %></h3>
+                <h3>Source: <%= fine_tune.platform_source %></h3>
+                <h3>Link: <%= fine_tune.platform_link %></h3>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
-  </div>
+  <% else %>
+    <div class="text-center text-white">No results found</div>
+  <% end %>
 </div>

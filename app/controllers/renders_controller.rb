@@ -4,19 +4,91 @@ require 'uri'
 require 'open-uri'
 
 class RendersController < ApplicationController
-  def index
-    @renders = Render.all
-    @models = Model.pluck(:id, :name).to_h
-    @sort = [:model_id, :steps, :prompt]
-    @filters = [:render_type, :steps, :loras, :model_id]
-    @filter_options = {}
-    @filter_options = get_filter_options(@filters, @filter_options, Render.all)
-    # Take filter symbols
-    @renders = sorted_records(Render.all, params[:sort_by], @sort)
-    @renders = apply_filter_conditions(@filters, params, @renders)
+  # def index
+  #   @renders = Render.includes(images: { image_attachment: :blob })
+  #   @models = Model.pluck(:id, :name).to_h
+  #   @sort = [:model_id, :steps, :prompt]
+  #   @filters = [:render_type, :steps, :loras, :model_id]
+  #   @filter_options = {}
+  #   @filter_options = get_filter_options(@filters, @filter_options, Render.all)
     
+  #   if params[:filters].present?
+  #     filters = params[:filters].map { |f| f.split(":") }
+  #     grouped_filters = filters.group_by(&:first).transform_values { |v| v.map(&:last) }
+
+  #     Rails.logger.debug "Grouped Filters: #{grouped_filters.inspect}"
+  #     Rails.logger.debug "Before Filtering: #{@renders.size} renders"
+
+      
+  #     grouped_filters.each do |filter_type, filter_value|
+  #       next unless Render.column_names.include?(filter_type)
+
+  #       @renders = @renders.where(filter_type => filter_value.map(&:last))
+  #     end
+  #   end
+
+  #   # Take filter symbols
+  #   @renders = sorted_records(@renders, params[:sort_by], @sort)
+  #   @renders = apply_filter_conditions(@filters, params, @renders)
+  #   @pagy, @renders = pagy(@renders)
+
+  #   respond_to do |format|
+  #     format.html
+  #     format.turbo_stream do
+  #       render turbo_stream: turbo_stream.replace(
+  #         "renders_table", # Turbo frame ID
+  #         partial: "shared/resource_table",
+  #         locals: { 
+  #           collection: @renders, 
+  #           headers: view_context.renders_table_headers
+  #         }
+  #       )
+  #     end
+  #   end
+  # end
+
+  def index
+    @renders = Render.includes(images: { image_attachment: :blob})
+    @models = Model.pluck(:id, :name).to_h
+    @sort_options = %w[model_id steps prompt]
+    @filters = %w[render_type steps loras model_id]
+
+    # Prepare filters
+    @filter_options = {}
+    @filters.each do |filter|
+      case filter
+      when 'loras'
+        @filter_options[filter] = Lora.pluck(:name).uniq
+      when 'model_id'
+        @filter_options[filter] = Model.pluck(:id)
+      else
+        @filter_options[filter] = Render.pluck(filter).uniq.compact
+      end
+    end
+
+    # Filtering
+    if params[:filters].present?
+      params[:filters].each do |filter|
+        key, value = filter.split(':')
+        if @filters.include?(key)
+          case key
+          when 'loras'
+            @renders = @renders.joins(:loras).where(loras: { name: value}).distinct
+          else
+            @renders = @renders.where(key => value)
+          end
+        end
+      end
+    end
+
+    # Sorting
+    if params[:sort_by].present? && @sort_options.include?(params[:sort_by])
+      @renders = @renders.order(params[:sort_by])
+    end
+
     @pagy, @renders = pagy(@renders)
   end
+
 
   def new
     @render = Render.new 
