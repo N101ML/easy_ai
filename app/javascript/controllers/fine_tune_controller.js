@@ -22,6 +22,11 @@ export default class extends Controller {
     }
   }
 
+  newRender(event) {
+    console.log(this.fineTunesTarget);
+    this.toggleFineTunes();
+  }
+
   showFineTunes() {
     const fineTunesElement = this.fineTunesTarget;
     fineTunesElement.classList.remove("hidden");

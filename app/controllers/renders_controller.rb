@@ -4,49 +4,6 @@ require 'uri'
 require 'open-uri'
 
 class RendersController < ApplicationController
-  # def index
-  #   @renders = Render.includes(images: { image_attachment: :blob })
-  #   @models = Model.pluck(:id, :name).to_h
-  #   @sort = [:model_id, :steps, :prompt]
-  #   @filters = [:render_type, :steps, :loras, :model_id]
-  #   @filter_options = {}
-  #   @filter_options = get_filter_options(@filters, @filter_options, Render.all)
-    
-  #   if params[:filters].present?
-  #     filters = params[:filters].map { |f| f.split(":") }
-  #     grouped_filters = filters.group_by(&:first).transform_values { |v| v.map(&:last) }
-
-  #     Rails.logger.debug "Grouped Filters: #{grouped_filters.inspect}"
-  #     Rails.logger.debug "Before Filtering: #{@renders.size} renders"
-
-      
-  #     grouped_filters.each do |filter_type, filter_value|
-  #       next unless Render.column_names.include?(filter_type)
-
-  #       @renders = @renders.where(filter_type => filter_value.map(&:last))
-  #     end
-  #   end
-
-  #   # Take filter symbols
-  #   @renders = sorted_records(@renders, params[:sort_by], @sort)
-  #   @renders = apply_filter_conditions(@filters, params, @renders)
-  #   @pagy, @renders = pagy(@renders)
-
-  #   respond_to do |format|
-  #     format.html
-  #     format.turbo_stream do
-  #       render turbo_stream: turbo_stream.replace(
-  #         "renders_table", # Turbo frame ID
-  #         partial: "shared/resource_table",
-  #         locals: { 
-  #           collection: @renders, 
-  #           headers: view_context.renders_table_headers
-  #         }
-  #       )
-  #     end
-  #   end
-  # end
-
   def index
     @renders = Render.includes(images: { image_attachment: :blob})
     @models = Model.pluck(:id, :name).to_h
@@ -94,19 +51,29 @@ class RendersController < ApplicationController
     @render = Render.new 
     @models = Model.all
     @loras = Lora.all
+    @fine_tunes = FineTune.all
   end
 
-  def show
+  def show 
     @render = Render.find(params[:id])
   end
 
   def create
+    # Lora Scales are not part of Render model - but needed for RenderLora Join Table
     @render = Render.new(filtered_params.except(:lora_scales))
-
     @models = Model.all
-    lora_ids = params[:render][:lora_ids] || []
-    loras = Lora.where(id: lora_ids)
-    @num_outputs = params[:num_outputs]
+    loras = Lora.where(id: params[:lora_ids]) if params[:lora_ids]
+
+    # params[:lora_scales] format: "lora_scales": { "lora_id": "lora_scale" } or nil if no lora's present
+    case @render.render_type
+    when 'Image'
+      render_image(@render, params[:prompt], params[:model_id], params[:guidance_scale], params[:steps], params[:num_outputs], loras, params[:render][:lora_scales])
+    when 'Sample'
+      render_sample()
+    when 'Lora Test'
+      render_lora_test()
+    end
+
 
     # Lora Triggers
     @render.prompt = process_lora_triggers(@render.prompt, loras) if loras.present?
@@ -120,7 +87,8 @@ class RendersController < ApplicationController
 
     if @render.save
       # Iterate through LoRAs to add LoRA Scale to RenderLora Join Table
-      process_lora_scales(@render, params[:render][:lora_scales])
+      # process_lora_scales(@render, params[:render][:lora_scales])
+      process_lora_scales(@render, loras)
 
       # Generate image url from Replicate -> Inputting render object and array of url_src from Lora(s)
       image_urls = generate_image_via_api(@render, loras)
@@ -144,13 +112,63 @@ class RendersController < ApplicationController
     end
   end
 
+  def render_lora_test(lora_scale_range_step, lora_scale_range_min, lora_scale_range_max, guidance_scale_step, guidance_scale_min, guidance_scale_max, step_step, step_min, step_max)
+    initialize_lora_test_params(lora_scale_range_step, lora_scale_range_min, lora_scale_range_max, guidance_scale_step, guidance_scale_min, guidance_scale_max, step_step, step_min, step_max)
+    @loras_range.each do |lora_scale|
+      @guidance_range.each do |g_scale|
+        @step_range.each do |step|
+          if @render.save
+            :num_outputs
+          end
+        end
+      end
+    end
+  end
+
+  def initialize_lora_test_params(lora_scale_range_step, lora_scale_range_min, lora_scale_range_max, guidance_scale_step, guidance_scale_min, guidance_scale_max, step_step, step_min, step_max)
+    @loras_range = render_ranges(lora_scale_range_min, lora_scale_range_max, lora_scale_range_step).uniq
+    @guidance_range = render_ranges(guidance_scale_min, guidance_scale_max, guidance_scale_step).uniq
+    @step_range = render_ranges(step_min, step_max, step_step)
+  end
+
   private
+
+  def render_image(render, prompt, model, guidance_scale, steps, outputs, loras, lora_scales)
+    loras = process_loras(loras) if loras
+    if render.save
+      # Add to RenderJoin
+      process_lora_scales(render, lora_scales) if loras
+      image_urls = generate_image_via_api(render, loras)
+
+
+    end
+    # check for outputs
+    # render save
+      # process LoraRender Join Table
+      # Generate Image via API
+      # Create and save Image
+  end
+
+  # Takes an array of loras or empty array - returns an array of loras (or an empty array)
+  def process_loras(loras)
+    # Tokenize and process prompt for each lora - Returns an array
+    loras.each do |lora|
+      lora.url_src = tokenize_lora(lora)
+      lora.prompt = process_lora_triggers
+    end
+    loras
+  end
+
+  def render_ranges(min, max, step)
+    (min..max).step(step).map { |el| el }
+  end
 
   def render_params
     params.require(:render).permit(
       :render_type,
       :prompt,
       :model_id,
+      :fine_tune_id,
       :guidance_scale,
       :guidance_scale_min,
       :guidance_scale_max,
@@ -174,6 +192,10 @@ class RendersController < ApplicationController
 
       params.delete_if { |_, value| value.blank? }
     end
+  end
+
+  def render_lora_test()
+
   end
 
   def process_lora_scales(render, lora_scales)
@@ -208,10 +230,12 @@ class RendersController < ApplicationController
     uri = URI('http://localhost:5000/replicate/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
+    # Check for fine-tune
+    model = render.fine_tune_id ? FineTune.where(id: render.fine_tune_id).platform_source : render.model.platform_source
 
     data = {
       prompt: render.prompt,
-      base_model: render.model.url_src,
+      base_model: model,
       g_scale: render.guidance_scale,
       steps: render.steps,
       lora_1: loras[0]&.url_src,

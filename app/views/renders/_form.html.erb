@@ -16,10 +16,26 @@
     <%= form.text_area :prompt, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter prompt (e.g., {lora_1} in the style of {lora_2})" %>
   </div>
 
-  <div class="my-5">
-    <%= form.collection_select :model_id, @models, :id, :name, { prompt: "Select a Model" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  <div data-controller="fine-tune">
+    <!-- Model Select -->
+    <div class="my-5">
+      <%= form.collection_select :model_id, @models, :id, :name,
+        { prompt: "Select a Model" },
+        class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full",
+        data: { action: "change->fine-tune#newRender" } %>
+    </div>
+
+    <!-- stimulus: when a model is selected -> the fine tune div is shown -->
+    <!-- fine-tune div: gets the model from stimulus to display the fine tunes that apply and None -->
+
+    <!-- Fine-Tune Select -->
+    <div class="hidden my-5" data-fine-tune-target="fineTunes">
+      <%= form.label :fine_tune, "Fine Tune:", class: "text-white" %>
+      <%= form.collection_select :fine_tune_id, [], :id, :name, { include_blank: "None" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+    </div>
   </div>
 
+  <!-- Guidance Scale for Image and Sample -->
   <div class="hidden my-5", data-lora-scales-target="imageGuidanceScale">
     <%= form.label :guidance_scale, "Guidance Scale", class: "text-white" %>
     <%= form.number_field :guidance_scale, step: 0.01, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", placeholder: "Enter guidance scale" %>

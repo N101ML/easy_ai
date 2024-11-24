@@ -60,3 +60,5 @@ g_scale = 3.0
 inference_steps = 30
 img = image = gen_image(prompt, base_model_url, g_scale, inference_steps, lora_1=lora_1_url, l1=l1)
 save_image(img, 30, 3.0, base_model_name, lora_name, l1=1)
+
+def lora_test(prompt, base_model_url, base_model_name, )

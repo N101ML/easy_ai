@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_19_193029) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_24_174813) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -99,6 +99,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_19_193029) do
     t.text "prompt"
     t.integer "steps"
     t.integer "num_outputs"
+    t.integer "fine_tune_id"
+    t.index ["fine_tune_id"], name: "index_renders_on_fine_tune_id"
     t.index ["model_id"], name: "index_renders_on_model_id"
   end
 
@@ -122,6 +124,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_19_193029) do
   add_foreign_key "loras", "models", on_delete: :nullify
   add_foreign_key "render_loras", "loras"
   add_foreign_key "render_loras", "renders"
+  add_foreign_key "renders", "fine_tunes"
   add_foreign_key "renders", "models"
   add_foreign_key "trainings", "models"
 end
