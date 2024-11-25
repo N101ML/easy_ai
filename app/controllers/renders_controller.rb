@@ -7,7 +7,7 @@ class RendersController < ApplicationController
   def index
     @renders = Render.includes(images: { image_attachment: :blob})
     @models = Model.pluck(:id, :name).to_h
-    @sort_options = %w[model_id steps prompt]
+    @sort_options = %w[model_id steps prompt created_at]
     @filters = %w[render_type steps loras model_id]
 
     # Prepare filters
@@ -39,8 +39,10 @@ class RendersController < ApplicationController
     end
 
     # Sorting
-    if params[:sort_by].present? && @sort_options.include?(params[:sort_by])
-      @renders = @renders.order(params[:sort_by])
+    @renders = if params[:sort_by].present? && @sort_options.include?(params[:sort_by])
+                @renders.order(params[:sort_by])
+    else
+      @renders = @renders.order(created_at: :desc)
     end
 
     @pagy, @renders = pagy(@renders)
