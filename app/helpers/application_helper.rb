@@ -16,7 +16,7 @@ module ApplicationHelper
   end
 
   def format_thumbnail(object, link_target: :object)
-    return link_to("No Image", url_for(object), target: "_top") unless object.images.loaded? && object.images.any?
+    return link_to("No Image", url_for(object), target: "_top") unless object.images.any?
 
     num_images_class = object.images.size > 1 ? "grid grid-cols-2 gap-2" : ""
     

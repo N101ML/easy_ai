@@ -60,14 +60,14 @@ class RendersController < ApplicationController
 
   def create
     # Lora Scales are not part of Render model - but needed for RenderLora Join Table
-    @render = Render.new(filtered_params.except(:lora_scales))
+    @render = Render.new(filtered_params.except(:lora_scales, :lora_ids))
     @models = Model.all
-    loras = Lora.where(id: params[:lora_ids]) if params[:lora_ids]
+    loras = Lora.where(id: params[:render][:lora_ids]) if params[:render][:lora_ids]
 
     # params[:lora_scales] format: "lora_scales": { "lora_id": "lora_scale" } or nil if no lora's present
     case @render.render_type
     when 'Image'
-      render_image(@render, params[:prompt], params[:model_id], params[:guidance_scale], params[:steps], params[:num_outputs], loras, params[:render][:lora_scales])
+      render_image(params[:prompt], params[:model_id], params[:guidance_scale], params[:steps], params[:num_outputs], loras, params[:render][:lora_scales])
     when 'Sample'
       render_sample()
     when 'Lora Test'
@@ -133,14 +133,25 @@ class RendersController < ApplicationController
 
   private
 
-  def render_image(render, prompt, model, guidance_scale, steps, outputs, loras, lora_scales)
+  def render_image(prompt, model, guidance_scale, steps, outputs, loras, lora_scales)
+    puts "from the render_image!"
     loras = process_loras(loras) if loras
-    if render.save
+    puts "from the render_image after loras"
+    if @render.save
       # Add to RenderJoin
-      process_lora_scales(render, lora_scales) if loras
-      image_urls = generate_image_via_api(render, loras)
-
-
+      puts "inside render save"
+      process_lora_scales(@render, lora_scales) if loras
+      puts "after process lora scales"
+      image_urls = generate_image_via_api(@render, loras)
+      puts "after image_urls"
+      render_save_images(image_urls, @render) if image_urls
+      puts "after render_save_images"
+      redirect_to renders_path, notice: 'Render was successfully created.'
+    else
+      puts "no render save"
+      Rails.logger.info(@render.errors.full_messages)
+      @models = Model.all 
+      render :new
     end
     # check for outputs
     # render save
@@ -154,8 +165,8 @@ class RendersController < ApplicationController
     # Tokenize and process prompt for each lora - Returns an array
     loras.each do |lora|
       lora.url_src = tokenize_lora(lora)
-      lora.prompt = process_lora_triggers
     end
+    @render.prompt = process_lora_triggers(@render.prompt, loras)
     loras
   end
 
@@ -178,6 +189,8 @@ class RendersController < ApplicationController
       :lora_scale_range_min,
       :lora_scale_range_max,
       :lora_scale_range_step,
+      lora_ids: [],
+      lora_scales: {}
     )
   end
 
@@ -191,6 +204,10 @@ class RendersController < ApplicationController
       end
 
       params.delete_if { |_, value| value.blank? }
+
+      # Ensure lora_scales and lora_ids are retained
+      params[:lora_scales] ||= {}
+      params[:lora_ids] ||= []
     end
   end
 
@@ -227,11 +244,12 @@ class RendersController < ApplicationController
   end
 
   def replicate_image(render, loras)
+    puts "inside replicate image"
     uri = URI('http://localhost:5000/replicate/generate_image')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.path, { 'Content-Type' => 'application/json' })
     # Check for fine-tune
-    model = render.fine_tune_id ? FineTune.where(id: render.fine_tune_id).platform_source : render.model.platform_source
+    model = render.fine_tune_id ? FineTune.find(render.fine_tune_id).platform_source : render.model.platform_source
 
     data = {
       prompt: render.prompt,
@@ -244,7 +262,7 @@ class RendersController < ApplicationController
       l2: render.render_loras.where(lora_id: loras[1]&.id).pluck(:scale).first,
       num_outputs: render.num_outputs
     }
-
+    puts "data: #{data}"
     Rails.logger.info("Sending request to Flask app: #{data.to_json}")
 
     request.body = data.to_json

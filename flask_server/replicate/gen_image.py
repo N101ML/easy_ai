@@ -14,12 +14,12 @@ def gen_image(prompt, base_model, g_scale, steps, lora_1=None, lora_2=None, l1=N
     "output_quality": 80,
     "prompt_strength": 0.8,
     "num_inference_steps": steps,
-    "disable_safety_checker": True
+    "disable_safety_checker": True  
   }
   
   # Add LoRAs if present
   hf_loras, lora_scales = [], []
-
+ 
   if lora_1:
     hf_loras.append(lora_1)
     lora_scales.append(l1)

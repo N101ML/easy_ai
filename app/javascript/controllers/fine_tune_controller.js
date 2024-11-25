@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 // Connects to data-controller="fine-tune"
 export default class extends Controller {
   static targets = ["fineTunes"];
-  fineTunesToggle = false;
+  static values = { fineTunesToggle: Boolean, default: false };
 
   connect() {
     console.log("fine-tune controller: connected");
@@ -23,7 +23,8 @@ export default class extends Controller {
   }
 
   newRender(event) {
-    console.log(this.fineTunesTarget);
+    this.fineTunesToggleValue =
+      this.fineTunesToggleValue === false ? true : false;
     this.toggleFineTunes();
   }
 

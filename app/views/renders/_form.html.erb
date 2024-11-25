@@ -31,7 +31,7 @@
     <!-- Fine-Tune Select -->
     <div class="hidden my-5" data-fine-tune-target="fineTunes">
       <%= form.label :fine_tune, "Fine Tune:", class: "text-white" %>
-      <%= form.collection_select :fine_tune_id, [], :id, :name, { include_blank: "None" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      <%= form.collection_select :fine_tune_id, @fine_tunes, :id, :name, { include_blank: "None" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
     </div>
   </div>
 
