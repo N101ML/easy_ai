@@ -11,8 +11,6 @@ export default class extends Controller {
   }
 
   select(event) {
-    console.log("a filter was selected");
-
     const filterElement = event.currentTarget;
     const filterType = filterElement.dataset.filterType;
     const filterValue = filterElement.dataset.filterValue;
@@ -36,6 +34,10 @@ export default class extends Controller {
       filterElement.classList.add("bg-blue-500", "text-green");
     }
 
+    console.log(`params: ${params}`);
+    console.log(`url: ${url}`);
+    console.log(`url_search: ${url.search}`);
+    console.log(`url_search_string: ${params.toString()}`);
     // Update URL without reloading
     url.search = params.toString();
     window.history.replaceState({}, "", url);
@@ -62,7 +64,6 @@ export default class extends Controller {
   }
 
   updateTable() {
-    console.log(`active: ${this.activeTableValue}`);
     if (
       this.activeTableValue === "hidden" &&
       this.tableTarget.classList.contains("hidden") == false
@@ -77,5 +78,12 @@ export default class extends Controller {
     this.activeTableValue =
       this.activeTableValue === "hidden" ? "visible" : "hidden";
     this.updateTable();
+  }
+
+  reset(event) {
+    console.log(`current_target: ${event.currentTarget}`);
+    const url = new URL(window.location);
+    url.search = "";
+    window.history.replaceState({}, "", url);
   }
 }
