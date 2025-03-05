@@ -1,24 +1,4 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+EASYAI - A Rails application to use APIs to create, manage, save and expirment with different Third-Party LLM APIs
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
